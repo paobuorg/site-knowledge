@@ -6,9 +6,9 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 
 ## Status
 
-- The static site is implemented locally and passes its build checks. It is not a deployed site. All six public repositories have been pushed to GitHub; Pages and DNS are not enabled.
+- The knowledge site is deployed on GitHub Pages at `https://learn.paobu.org/`; Pages and HTTPS are enabled.
 - All twenty-four knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-27; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-27/review/ai-review-report.md).
-- Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. `.github/workflows/pages.yml` is defined. Pages is not enabled; the bootstrap run failed for that reason, was removed, and Actions is paused. Production knowledge shows 24 entities (23 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
+- Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. The Pages workflow has deployed successfully and `https://learn.paobu.org/` enforces HTTPS. Production knowledge shows 24 entities (23 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
 - This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site.
 
 ## Technical baseline
