@@ -1,0 +1,410 @@
+---
+import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Icon from '@paobu/core/components/Icon.astro';
+import SearchField from '@paobu/core/components/SearchField.astro';
+import { t, TOPIC_IDS, TOPIC_META, type Locale, LOCALES } from '@paobu/core/lib/i18n';
+import { siteContent } from '../../lib/content';
+import {
+  TOPIC_COPY,
+  contentTypeLabel,
+  knowledgeDetails,
+  knowledgeHref,
+  topicLabel,
+} from '../../lib/view';
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent();
+const articles = content
+  .visible('knowledge')
+  .filter((entity) => !['learning-path', 'glossary'].includes(knowledgeDetails(entity).contentType))
+  .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.slug.localeCompare(b.slug));
+const topicCounts = new Map(
+  TOPIC_IDS.map((topic) => [
+    topic,
+    articles.filter((entity) => {
+      const details = knowledgeDetails(entity);
+      return details.primaryTopic === topic || details.secondaryTopics.includes(topic);
+    }).length,
+  ]),
+);
+const latest = articles.slice(0, 4);
+const bySlug = (slug: string) => articles.find((entity) => entity.slug === slug);
+const paths = [
+  {
+    title: locale === 'zh-CN' ? '开始跑步' : 'Start running',
+    body: locale === 'zh-CN'
+      ? '先理解轻松强度，再安排可持续的一周，最后认识比赛距离。'
+      : 'Understand easy effort, build a repeatable week, then learn what race distance means.',
+    steps: ['easy-run', 'running-habits', 'training-week', 'training-log', 'running-across-life', 'marathon-distance'],
+  },
+  {
+    title: locale === 'zh-CN' ? '理解强度' : 'Understand intensity',
+    body: locale === 'zh-CN'
+      ? '用谈话测试、动作观察和训练结构，把快慢与恢复放在一起理解。'
+      : 'Connect talk-test effort, form observation and weekly structure instead of chasing one pace.',
+    steps: ['easy-run', 'running-form', 'training-week', 'long-run'],
+  },
+  {
+    title: locale === 'zh-CN' ? '首场半马/马拉松准备' : 'First half or marathon',
+    body: locale === 'zh-CN'
+      ? '从训练周、长距离和补给，到力量、减量、比赛距离、疼痛判断与恢复。'
+      : 'From weekly training and long runs to fuelling, strength, tapering, race distance, pain judgement and recovery.',
+    steps: ['training-week', 'long-run', 'long-run-fueling', 'hydration', 'strength-and-taper', 'daily-fueling', 'training-log', 'marathon-distance', 'pain-and-load'],
+  },
+  {
+    title: locale === 'zh-CN' ? '入门越野' : 'Start trail running',
+    body: locale === 'zh-CN'
+      ? '先读路线与天气，再准备鞋、照明、背包、补水和可撤退计划。'
+      : 'Read route and weather first, then prepare shoes, light, pack, fluids and an escape plan.',
+    steps: ['route-safety', 'running-shoes', 'trail-gear', 'cold-weather-running', 'long-run-fueling', 'hydration', 'watch-gps'],
+  },
+  {
+    title: locale === 'zh-CN' ? '读懂经典赛道' : 'Read classic courses',
+    body: locale === 'zh-CN'
+      ? '从马拉松距离与跑步文化出发，再用固定版本、来源和地图锚点阅读经典赛道。'
+      : 'Start with marathon distance and running culture, then read classic courses through fixed versions, sources and map anchors.',
+    steps: ['marathon-distance', 'running-culture', 'recovery-day', 'route-safety'],
+  },
+];
+const copy = locale === 'zh-CN'
+  ? {
+      title: '跑步知识',
+      subtitle: '更科学地跑，更长久地跑',
+      intro: '围绕训练、恢复、营养与安全的常青知识。每篇正文都保留来源、适用条件与审阅状态。',
+      searchPlaceholder: '搜索文章、主题或关键词',
+      topicsTitle: '九大主题',
+      topicsHint: '主题色块是阅读入口，不是难度分级。',
+      pathsTitle: '学习路径',
+      pathsHint: '按顺序阅读已审阅文章；路径不复制正文。',
+      glossaryTitle: '术语表',
+      glossaryHint: '配速、RPE、步频、爬升与文件格式的共同定义。',
+      glossaryLink: '打开术语表',
+      latestTitle: '最新文章',
+      allArticles: '查看全部',
+      read: '阅读',
+      minutes: '分钟阅读',
+      emptyTopic: '暂无文章',
+      articleCount: (count: number) => `${count} 篇`,
+      step: '第 {n} 步',
+      previewNote: '当前为预览构建，文章仍处于编辑审阅阶段。',
+    }
+  : {
+      title: 'Running knowledge',
+      subtitle: 'Train smarter, run for longer',
+      intro: 'Evergreen knowledge on training, recovery, nutrition and safety. Every article keeps its sources, conditions and review status.',
+      searchPlaceholder: 'Search articles, topics or keywords',
+      topicsTitle: 'Nine topics',
+      topicsHint: 'Topic tiles are reading entries, not difficulty levels.',
+      pathsTitle: 'Learning paths',
+      pathsHint: 'Read reviewed articles in order; paths do not duplicate the text.',
+      glossaryTitle: 'Glossary',
+      glossaryHint: 'Shared definitions for pace, RPE, cadence, elevation gain and file formats.',
+      glossaryLink: 'Open the glossary',
+      latestTitle: 'Latest articles',
+      allArticles: 'View all',
+      read: 'Read',
+      minutes: 'min read',
+      emptyTopic: 'No articles yet',
+      articleCount: (count: number) => `${count} article${count === 1 ? '' : 's'}`,
+      step: 'Step {n}',
+      previewNote: 'This is a preview build; articles are still under editorial review.',
+    };
+const title = `${copy.title} · RunMap`;
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={copy.intro}
+  active="knowledge"
+  preview={content.preview}
+>
+  <div class="page-shell">
+    <section class="knowledge-hero">
+      <div class="knowledge-hero-copy">
+        <span class="pill mint"><Icon name="book" size={14} />{t(locale, 'knowledge')}</span>
+        <h1>{copy.title}</h1>
+        <p class="knowledge-subtitle">{copy.subtitle}</p>
+        <p class="knowledge-intro">{copy.intro}</p>
+      </div>
+      <div class="knowledge-search">
+        <SearchField
+          locale={locale}
+          action={`/${locale}/search/`}
+          placeholder={copy.searchPlaceholder}
+          id="knowledge-search"
+        />
+      </div>
+    </section>
+
+    <section aria-labelledby="topics-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="topics-heading">{copy.topicsTitle}</h2>
+          <p class="section-hint">{copy.topicsHint}</p>
+        </div>
+      </div>
+      <div class="topic-grid">
+        {TOPIC_IDS.map((topic) => {
+          const meta = TOPIC_META[topic];
+          const count = topicCounts.get(topic) ?? 0;
+          return (
+            <a class="topic-tile" href={`/${locale}/topics/${topic}/`} data-tone={meta.tone}>
+              <span class="topic-icon" aria-hidden="true"><Icon name={meta.icon} size={24} /></span>
+              <span class="topic-copy">
+                <h3>{meta[locale === 'zh-CN' ? 'zh' : 'en']}</h3>
+                <p>{TOPIC_COPY[topic][locale === 'zh-CN' ? 'zh' : 'en']}</p>
+                <span class="topic-count">{count > 0 ? copy.articleCount(count) : copy.emptyTopic}</span>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <section aria-labelledby="paths-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="paths-heading">{copy.pathsTitle}</h2>
+          <p class="section-hint">{copy.pathsHint}</p>
+        </div>
+      </div>
+      <div class="path-list">
+        {paths.map((path) => (
+          <article class="card path-card">
+            <div>
+              <span class="pill lavender"><Icon name="spark" size={13} />{copy.pathsTitle}</span>
+              <h3>{path.title}</h3>
+              <p>{path.body}</p>
+            </div>
+            <ol class="path-steps-list">
+              {path.steps.map((slug, index) => {
+                const entity = bySlug(slug);
+                if (!entity) return null;
+                const translation = content.translation(entity, locale);
+                return (
+                  <li>
+                    <a href={knowledgeHref(entity, locale)}>
+                      <span class="path-step-number" aria-hidden="true">{index + 1}</span>
+                      <span>{translation.title}</span>
+                      <Icon name="arrow-right" size={15} />
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="glossary-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="glossary-heading">{copy.glossaryTitle}</h2>
+          <p class="section-hint">{copy.glossaryHint}</p>
+        </div>
+      </div>
+      <a class="card path-card" href={`/${locale}/glossary/`}>
+        <div>
+          <span class="pill lavender"><Icon name="book" size={13} />{copy.glossaryTitle}</span>
+          <h3>{copy.glossaryLink}</h3>
+          <p>{copy.glossaryHint}</p>
+        </div>
+        <Icon name="arrow-right" size={20} />
+      </a>
+    </section>
+
+    <section aria-labelledby="latest-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="latest-heading">{copy.latestTitle}</h2>
+        </div>
+        <a class="text-link" href={`/${locale}/articles/`}>{copy.allArticles} <Icon name="arrow-right" size={15} /></a>
+      </div>
+      <div class="grid two article-grid">
+        {latest.map((entity) => {
+          const translation = content.translation(entity, locale);
+          const details = knowledgeDetails(entity);
+          const meta = TOPIC_META[details.primaryTopic];
+          const tone = meta?.tone ?? 'blue';
+          return (
+            <a class={`card article-card card-link tone-${tone}`} href={knowledgeHref(entity, locale)}>
+              <div class={`article-card-cover tone-${tone}`}>
+                <span class="pill">{topicLabel(details.primaryTopic, locale)}</span>
+                <span class="topic-icon" aria-hidden="true"><Icon name={meta?.icon ?? 'book'} size={27} /></span>
+              </div>
+              <div class="article-card-body">
+                <h3>{translation.title}</h3>
+                <p>{translation.summary}</p>
+                <div class="article-card-meta">
+                  <span>{contentTypeLabel(details.contentType, locale)}</span>
+                  <span>·</span>
+                  <span>{translation.readingMinutes} {copy.minutes}</span>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .knowledge-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+    gap: 32px;
+    align-items: end;
+    margin-bottom: 34px;
+  }
+
+  .knowledge-hero-copy h1 {
+    margin: 14px 0 4px;
+    font-size: clamp(2.6rem, 2rem + 2.6vw, 4.2rem);
+    letter-spacing: -0.02em;
+  }
+
+  .knowledge-subtitle {
+    margin: 0 0 14px;
+    color: var(--muted-strong);
+    font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.32rem);
+    font-weight: 650;
+  }
+
+  .knowledge-intro {
+    max-width: 66ch;
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .knowledge-search {
+    padding-bottom: 6px;
+  }
+
+  .section-hint {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .topic-tile[data-tone='blue'] { background: var(--blue-soft); }
+  .topic-tile[data-tone='mint'] { background: var(--primary-soft); }
+  .topic-tile[data-tone='lavender'] { background: var(--lavender-soft); }
+  .topic-tile[data-tone='yellow'] { background: var(--yellow-soft); }
+  .topic-tile[data-tone='coral'] { background: var(--coral-soft); }
+  .topic-tile[data-tone='pink'] { background: var(--pink-soft); }
+  .topic-tile[data-tone='sky'] { background: var(--sky-soft); }
+  .topic-tile[data-tone='peach'] { background: var(--peach-soft); }
+  .topic-tile[data-tone='sand'] { background: var(--sand-soft); }
+
+  .topic-copy {
+    min-width: 0;
+  }
+
+  .topic-count {
+    display: inline-block;
+    margin-top: 6px;
+    color: var(--muted-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .path-steps-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .path-steps-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    color: var(--text);
+    font-size: 0.86rem;
+    font-weight: 650;
+    text-decoration: none;
+    transition: border-color 160ms var(--ease), background 160ms var(--ease);
+  }
+
+  .path-steps-list a:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-2);
+  }
+
+  .path-steps-list a > :last-child {
+    margin-left: auto;
+    color: var(--muted);
+  }
+
+  .path-step-number {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--lavender-soft);
+    color: #5c46a5;
+    font-size: 0.68rem;
+    font-weight: 800;
+  }
+
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--primary-text);
+    font-size: 0.86rem;
+    font-weight: 750;
+    text-decoration: none;
+  }
+
+  .text-link:hover {
+    color: var(--primary-text);
+    text-decoration: underline;
+  }
+
+  .article-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (max-width: 1050px) {
+    .article-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .knowledge-hero {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .topic-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 620px) {
+    .topic-grid,
+    .article-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .topic-tile {
+      min-height: 88px;
+    }
+  }
+</style>

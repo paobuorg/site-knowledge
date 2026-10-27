@@ -1,0 +1,247 @@
+---
+import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Icon from '@paobu/core/components/Icon.astro';
+import { TOPIC_META, type Locale, type TopicId, LOCALES, TOPIC_IDS } from '@paobu/core/lib/i18n';
+import { siteContent } from '../../../lib/content';
+import { TOPIC_COPY, contentTypeLabel, knowledgeDetails, knowledgeHref } from '../../../lib/view';
+
+export function getStaticPaths() {
+  return LOCALES.flatMap((locale) =>
+    TOPIC_IDS.map((topic) => ({ params: { locale, topic } })),
+  );
+}
+
+const locale = Astro.params.locale as Locale;
+const topic = Astro.params.topic as TopicId;
+const content = siteContent();
+const meta = TOPIC_META[topic];
+const articles = content
+  .visible('knowledge')
+  .filter((entity) => {
+    const details = knowledgeDetails(entity);
+    return !['learning-path', 'glossary'].includes(details.contentType)
+      && (details.primaryTopic === topic || details.secondaryTopics.includes(topic));
+  })
+  .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.slug.localeCompare(b.slug));
+const copy = locale === 'zh-CN'
+  ? {
+      home: '首页',
+      topics: '主题',
+      count: `${articles.length} 篇文章`,
+      lead: `关于${meta.zh}的已发布与待审阅文章。`,
+      emptyTitle: '这个主题的文章正在准备中',
+      emptyBody: '我们不会用占位文章填满主题。可以先阅读相关主题，或返回全部文章。',
+      allArticles: '浏览全部文章',
+      otherTopics: '其他主题',
+      read: '阅读',
+      minutes: '分钟阅读',
+    }
+  : {
+      home: 'Home',
+      topics: 'Topics',
+      count: `${articles.length} article${articles.length === 1 ? '' : 's'}`,
+      lead: `Published and in-review articles on ${meta.en.toLowerCase()}.`,
+      emptyTitle: 'Articles for this topic are in preparation',
+      emptyBody: 'We do not fill topics with placeholder text. You can read a related topic or browse all articles.',
+      allArticles: 'Browse all articles',
+      otherTopics: 'Other topics',
+      read: 'Read',
+      minutes: 'min read',
+    };
+const title = `${meta[locale === 'zh-CN' ? 'zh' : 'en']} · RunMap`;
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={copy.lead}
+  active="knowledge"
+  preview={content.preview}
+>
+  <div class="page-shell">
+    <div class="breadcrumbs">
+      <ol>
+        <li><a href={`/${locale}/`}>{copy.home}</a></li>
+        <li><a href={`/${locale}/topics/`}>{copy.topics}</a></li>
+        <li>{meta[locale === 'zh-CN' ? 'zh' : 'en']}</li>
+      </ol>
+    </div>
+
+    <section class={`topic-hero tone-${meta.tone}`}>
+      <span class="topic-hero-icon" aria-hidden="true"><Icon name={meta.icon} size={30} /></span>
+      <div>
+        <span class="pill">{copy.count}</span>
+        <h1>{meta[locale === 'zh-CN' ? 'zh' : 'en']}</h1>
+        <p>{TOPIC_COPY[topic][locale === 'zh-CN' ? 'zh' : 'en']}</p>
+      </div>
+    </section>
+
+    {articles.length === 0 ? (
+      <div class="empty-state">
+        <Icon name="book" size={42} />
+        <h2>{copy.emptyTitle}</h2>
+        <p>{copy.emptyBody}</p>
+        <a class="button primary" href={`/${locale}/articles/`}>{copy.allArticles}</a>
+      </div>
+    ) : (
+      <div class="topic-article-list">
+        {articles.map((entity) => {
+          const translation = content.translation(entity, locale);
+          const details = knowledgeDetails(entity);
+          return (
+            <a class="card topic-article" href={knowledgeHref(entity, locale)}>
+              <div class="topic-article-head">
+                <span class="pill">{topic === details.primaryTopic ? meta[locale === 'zh-CN' ? 'zh' : 'en'] : contentTypeLabel(details.contentType, locale)}</span>
+                <span class="topic-article-time">{translation.readingMinutes} {copy.minutes}</span>
+              </div>
+              <h2>{translation.title}</h2>
+              <p>{translation.summary}</p>
+              <span class="topic-article-more">{copy.read} <Icon name="arrow-right" size={15} /></span>
+            </a>
+          );
+        })}
+      </div>
+    )}
+
+    <section class="other-topics">
+      <h2>{copy.otherTopics}</h2>
+      <div class="filter-row">
+        {TOPIC_IDS.filter((item) => item !== topic).map((item) => {
+          const other = TOPIC_META[item];
+          return (
+            <a class="filter-chip" href={`/${locale}/topics/${item}/`}>
+              <Icon name={other.icon} size={16} />{other[locale === 'zh-CN' ? 'zh' : 'en']}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .topic-hero {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 30px;
+    padding: 30px;
+    border-radius: var(--radius-panel);
+  }
+
+  .topic-hero.tone-blue { background: var(--blue-soft); }
+  .topic-hero.tone-mint { background: var(--primary-soft); }
+  .topic-hero.tone-lavender { background: var(--lavender-soft); }
+  .topic-hero.tone-yellow { background: var(--yellow-soft); }
+  .topic-hero.tone-coral { background: var(--coral-soft); }
+  .topic-hero.tone-pink { background: var(--pink-soft); }
+  .topic-hero.tone-sky { background: var(--sky-soft); }
+  .topic-hero.tone-peach { background: var(--peach-soft); }
+  .topic-hero.tone-sand { background: var(--sand-soft); }
+
+  .topic-hero-icon {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    flex: 0 0 auto;
+    border-radius: 24px;
+    background: color-mix(in srgb, var(--surface) 60%, transparent);
+  }
+
+  .topic-hero h1 {
+    margin: 8px 0 4px;
+    font-size: clamp(2rem, 1.6rem + 2vw, 3rem);
+  }
+
+  .topic-hero p {
+    margin: 0;
+    color: var(--muted-strong);
+    font-size: 1rem;
+  }
+
+  .topic-article-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .topic-article {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 22px;
+    color: var(--text);
+    text-decoration: none;
+    transition: transform 180ms var(--ease), border-color 180ms var(--ease), box-shadow 180ms var(--ease);
+  }
+
+  .topic-article:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .topic-article-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .topic-article-time {
+    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  .topic-article h2 {
+    margin: 2px 0 0;
+    font-size: 1.16rem;
+  }
+
+  .topic-article p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  .topic-article-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    color: var(--primary-text);
+    font-size: 0.8rem;
+    font-weight: 750;
+  }
+
+  .other-topics {
+    margin-top: 44px;
+    padding-top: 26px;
+    border-top: 1px solid var(--border);
+  }
+
+  .other-topics h2 {
+    margin-bottom: 14px;
+    font-size: 1.12rem;
+  }
+
+  @media (max-width: 760px) {
+    .topic-article-list {
+      grid-template-columns: 1fr;
+    }
+
+    .topic-hero {
+      align-items: flex-start;
+      padding: 22px;
+    }
+
+    .topic-hero-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+    }
+  }
+</style>

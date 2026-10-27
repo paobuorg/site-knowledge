@@ -1,0 +1,19 @@
+{
+  "name": "跑地图知识 · RunMap Learn",
+  "short_name": "跑地图知识",
+  "description": "可追溯的跑步知识：训练、恢复、营养、健康与安全。",
+  "lang": "zh-CN",
+  "start_url": "/zh-CN/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F6F8F7",
+  "theme_color": "#08B89D",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

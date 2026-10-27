@@ -1,0 +1,75 @@
+---
+import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Icon from '@paobu/core/components/Icon.astro';
+import { LOCALES, type Locale } from '@paobu/core/lib/i18n';
+import { siteContent } from '../../../lib/content';
+import { knowledgeDetails, knowledgeHref } from '../../../lib/view';
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent();
+const glossaries = content
+  .visible('knowledge')
+  .filter((entity) => knowledgeDetails(entity).contentType === 'glossary');
+const copy = locale === 'zh-CN'
+  ? {
+      home: '首页',
+      title: '术语表',
+      intro: '配速、RPE、步频、爬升、VO2max、GPX 等基础概念的统一定义。术语是阅读入口，不替代具体来源和个体化建议。',
+      empty: '暂无术语条目',
+    }
+  : {
+      home: 'Home',
+      title: 'Glossary',
+      intro: 'Shared definitions for pace, RPE, cadence, elevation gain, VO2max, GPX and other core terms. A glossary is a reading entry, not a substitute for sources or individual advice.',
+      empty: 'No glossary entries yet',
+    };
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${copy.title} · RunMap`}
+  description={copy.intro}
+  active="knowledge"
+  preview={content.preview}
+>
+  <div class="page-shell">
+    <div class="breadcrumbs">
+      <ol>
+        <li><a href={`/${locale}/`}>{copy.home}</a></li>
+        <li>{copy.title}</li>
+      </ol>
+    </div>
+
+    <div class="page-intro">
+      <div>
+        <span class="pill lavender"><Icon name="book" size={14} />{copy.title}</span>
+        <h1>{copy.title}</h1>
+        <p>{copy.intro}</p>
+      </div>
+    </div>
+
+    {glossaries.length === 0 && <p class="field-hint">{copy.empty}</p>}
+    <div class="path-list">
+      {glossaries.map((entity) => {
+        const translation = content.translation(entity, locale);
+        return (
+          <article class="card path-card">
+            <div>
+              <span class="pill lavender"><Icon name="book" size={13} />{copy.title}</span>
+              <h2><a href={knowledgeHref(entity, locale)}>{translation.title}</a></h2>
+              <p>{translation.summary}</p>
+            </div>
+            <a class="related-link" href={knowledgeHref(entity, locale)}>
+              <span>{translation.title}</span>
+              <Icon name="arrow-right" size={17} />
+            </a>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>

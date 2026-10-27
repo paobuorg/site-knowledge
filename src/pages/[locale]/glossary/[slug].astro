@@ -1,0 +1,410 @@
+---
+import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Icon from '@paobu/core/components/Icon.astro';
+import { otherLocale, type Locale, LOCALES, TOPIC_META } from '@paobu/core/lib/i18n';
+import { articleData, breadcrumbList } from '@paobu/core/lib/seo';
+import { siteContent } from '../../../lib/content';
+import {
+  contentTypeLabel,
+  entityHref,
+  formatDate,
+  knowledgeDetails,
+  knowledgeHref,
+  topicLabel,
+} from '../../../lib/view';
+
+export function getStaticPaths() {
+  const content = siteContent();
+  return LOCALES.flatMap((locale) =>
+    content
+      .visible('knowledge')
+      .filter((entity) => knowledgeDetails(entity).contentType === 'glossary')
+      .map((entity) => ({
+        params: { locale, slug: entity.slug },
+        props: { entityId: entity.entityId },
+      })),
+  );
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent();
+const entity = content.byId(Astro.props.entityId);
+if (!entity) throw new Error(`Knowledge ${Astro.props.entityId} is not visible`);
+const translation = content.translation(entity, locale);
+const details = knowledgeDetails(entity);
+const sources = content.sourcesFor(entity);
+const related = content.related(entity, locale);
+const reviews = content.reviews.filter(
+  (review) => review.entityId === entity.entityId && review.locale === locale,
+);
+const authors = [
+  ...new Set(
+    entity.translations
+      .flatMap((item) => item.authors)
+      .map((id) => content.contributors.find((person) => person.contributorId === id)?.displayName ?? id),
+  ),
+];
+const topicMeta = TOPIC_META[details.primaryTopic];
+const audienceLabels = locale === 'zh-CN'
+  ? { beginner: '入门', intermediate: '进阶', advanced: '高水平' }
+  : { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
+const copy = locale === 'zh-CN'
+  ? {
+      home: '首页',
+      articles: '术语表',
+      contents: '术语目录',
+      summaryTitle: '这篇讲什么',
+      audience: '适用对象',
+      updated: '更新于',
+      reviewed: '审阅于',
+      minutes: '分钟阅读',
+      reviewPending: '编辑审阅中',
+      reviewNote: '本文仍在编辑审阅中，尚未完成发布所需的专业审阅。表述与数字可能调整。',
+      sourcesTitle: '来源与证据',
+      accessed: '查阅',
+      relatedTitle: '相关内容',
+      relatedKnowledge: '关联知识',
+      relatedRoutes: '关联赛道',
+      relatedTools: '关联工具',
+      methodTitle: '版本与审阅',
+      authors: '撰写',
+      noReview: '尚无审阅记录',
+      back: '返回术语表',
+      emptyRelated: '暂无已发布的相关内容。',
+    }
+  : {
+      home: 'Home',
+      articles: 'Glossary',
+      contents: 'Terms',
+      summaryTitle: 'What this covers',
+      audience: 'Who it is for',
+      updated: 'Updated',
+      reviewed: 'Reviewed',
+      minutes: 'min read',
+      reviewPending: 'In editorial review',
+      reviewNote: 'This article is still in editorial review and has not completed the specialist review required for publication. Wording and figures may change.',
+      sourcesTitle: 'Sources and evidence',
+      accessed: 'Accessed',
+      relatedTitle: 'Related',
+      relatedKnowledge: 'Related knowledge',
+      relatedRoutes: 'Related routes',
+      relatedTools: 'Related tools',
+      methodTitle: 'Version and review',
+      authors: 'Written by',
+      noReview: 'No review record yet',
+      back: 'Back to glossary',
+      emptyRelated: 'No related published content yet.',
+    };
+const other = otherLocale(locale);
+const relatedKnowledge = related.filter((item) => item.kind === 'knowledge');
+const relatedRoutes = related.filter((item) => item.kind === 'route');
+const relatedTools = related.filter((item) => item.kind === 'tool');
+const title = `${translation.title} · RunMap`;
+const pageOrigin = Astro.site ?? Astro.url.origin;
+const pageUrl = new URL(`/${locale}/glossary/${entity.slug}/`, pageOrigin).toString();
+const structuredData = [
+  breadcrumbList([
+    { name: copy.home, url: new URL(`/${locale}/`, pageOrigin).toString() },
+    { name: copy.articles, url: new URL(`/${locale}/glossary/`, pageOrigin).toString() },
+    {
+      name: topicLabel(details.primaryTopic, locale),
+      url: new URL(`/${locale}/topics/${details.primaryTopic}/`, pageOrigin).toString(),
+    },
+    { name: translation.title, url: pageUrl },
+  ]),
+  articleData({
+    headline: translation.title,
+    description: translation.summary,
+    url: pageUrl,
+    locale,
+    dateModified: entity.updatedAt,
+    authors,
+  }),
+];
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={translation.summary}
+  active="knowledge"
+  preview={content.preview}
+  ogType="article"
+  alternateHref={`/${other}/glossary/${entity.slug}/`}
+  structuredData={structuredData}
+>
+  <div class="page-shell">
+    <div class="breadcrumbs">
+      <ol>
+        <li><a href={`/${locale}/`}>{copy.home}</a></li>
+        <li><a href={`/${locale}/glossary/`}>{copy.articles}</a></li>
+        <li><a href={`/${locale}/topics/${details.primaryTopic}/`}>{topicLabel(details.primaryTopic, locale)}</a></li>
+        <li>{translation.title}</li>
+      </ol>
+    </div>
+
+    <article class="article-layout">
+      <div>
+        <header class="article-header">
+          <div class="article-tags">
+            <a class={`pill tone-${topicMeta?.tone ?? 'blue'}`} href={`/${locale}/topics/${details.primaryTopic}/`}>
+              <Icon name={topicMeta?.icon ?? 'book'} size={13} />{topicLabel(details.primaryTopic, locale)}
+            </a>
+            <span class="pill">{contentTypeLabel(details.contentType, locale)}</span>
+            {entity.status !== 'published' && <span class="pill coral">{copy.reviewPending}</span>}
+          </div>
+          <h1>{translation.title}</h1>
+          <p class="article-summary">{translation.summary}</p>
+          <div class="article-meta">
+            <span><Icon name="clock" size={14} />{translation.readingMinutes} {copy.minutes}</span>
+            <span><Icon name="clock" size={14} />{copy.updated} {formatDate(entity.updatedAt, locale)}</span>
+            <span><Icon name="book" size={14} />{authors.join(', ')}</span>
+          </div>
+        </header>
+
+        <div class="audience-strip">
+          <span class="field-hint">{copy.audience}</span>
+          <div class="tag-row">
+            {details.audiences.map((audience) => (
+              <span class="pill">{audienceLabels[audience as keyof typeof audienceLabels] ?? audience}</span>
+            ))}
+            {details.secondaryTopics.map((topic) => (
+              <a class="pill" href={`/${locale}/topics/${topic}/`}>{topicLabel(topic, locale)}</a>
+            ))}
+          </div>
+        </div>
+
+        {entity.status !== 'published' && (
+          <div class="notice tone-yellow">
+            <Icon name="alert" size={18} />
+            <div>
+              <strong>{copy.reviewPending}</strong>
+              <p>{copy.reviewNote}</p>
+            </div>
+          </div>
+        )}
+
+        <details class="toc-mobile">
+          <summary>{copy.contents}</summary>
+          <ol>
+            {translation.headings.filter((heading) => heading.level === 2).map((heading) => (
+              <li><a href={`#${heading.id}`}>{heading.text}</a></li>
+            ))}
+          </ol>
+        </details>
+
+        <div class="prose" set:html={translation.html} />
+
+        <section class="article-source-section" aria-labelledby="sources-heading">
+          <h2 id="sources-heading">{copy.sourcesTitle}</h2>
+          <div class="source-list">
+            {sources.map((source) => (
+              <div class="source-item">
+                <a href={source.url} rel="external noopener">{source.title} <Icon name="external" size={14} /></a>
+                <p>{source.claims.join(' ')}</p>
+                <p class="source-meta">
+                  {source.publisher}
+                  {source.publishedAt ? ` · ${formatDate(source.publishedAt, locale)}` : ''}
+                  {' · '}{copy.accessed} {formatDate(source.accessedAt, locale)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section class="article-method" aria-labelledby="method-heading">
+          <h2 id="method-heading">{copy.methodTitle}</h2>
+          <p>{copy.authors}: {authors.join(', ')}</p>
+          <p>{copy.updated}: {formatDate(entity.updatedAt, locale)}</p>
+          <p>{copy.reviewed}: {formatDate(entity.reviewedAt, locale)} · {reviews.length ? (locale === 'zh-CN' ? `${reviews.length} 条审阅记录` : `${reviews.length} review record(s)`) : copy.noReview}</p>
+        </section>
+
+        <section class="article-related" aria-labelledby="related-heading">
+          <h2 id="related-heading">{copy.relatedTitle}</h2>
+          {related.length === 0 && <p class="field-hint">{copy.emptyRelated}</p>}
+          {relatedKnowledge.length > 0 && (
+            <>
+              <p class="field-hint">{copy.relatedKnowledge}</p>
+              <div class="related-row">
+                {relatedKnowledge.map((item) => (
+                  <a class="related-link" href={knowledgeHref(item, locale)}>
+                    <span>{content.translation(item, locale).title}</span>
+                    <Icon name="arrow-right" size={17} />
+                  </a>
+                ))}
+              </div>
+            </>
+          )}
+          {relatedRoutes.length > 0 && (
+            <>
+              <p class="field-hint">{copy.relatedRoutes}</p>
+              <div class="related-row">
+                {relatedRoutes.map((item) => (
+                  <a class="related-link" href={entityHref(item, locale)} data-cross-site>
+                    <span>{content.translation(item, locale).title}</span>
+                    <Icon name="arrow-right" size={17} />
+                  </a>
+                ))}
+              </div>
+            </>
+          )}
+          {relatedTools.length > 0 && (
+            <>
+              <p class="field-hint">{copy.relatedTools}</p>
+              <div class="related-row">
+                {relatedTools.map((item) => (
+                  <a class="related-link" href={entityHref(item, locale)} data-cross-site>
+                    <span>{content.translation(item, locale).title}</span>
+                    <Icon name="arrow-right" size={17} />
+                  </a>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+
+        <p class="article-back"><a href={`/${locale}/glossary/`}><Icon name="arrow-left" size={15} />{copy.back}</a></p>
+      </div>
+
+      <aside class="toc-panel" aria-labelledby="toc-heading">
+        <h2 id="toc-heading">{copy.contents}</h2>
+        <ol>
+          {translation.headings.filter((heading) => heading.level === 2).map((heading) => (
+            <li><a href={`#${heading.id}`}>{heading.text}</a></li>
+          ))}
+        </ol>
+      </aside>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 14px;
+  }
+
+  .article-tags .pill {
+    text-decoration: none;
+  }
+
+  .audience-strip {
+    margin: 0 0 26px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    background: var(--surface-2);
+  }
+
+  .audience-strip .field-hint {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag-row a.pill {
+    text-decoration: none;
+  }
+
+  .notice {
+    margin-bottom: 26px;
+  }
+
+  .toc-mobile {
+    margin: 0 0 24px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    background: var(--surface);
+  }
+
+  .toc-mobile summary {
+    cursor: pointer;
+    font-weight: 750;
+  }
+
+  .toc-mobile ol {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    color: var(--muted-strong);
+    font-size: 0.86rem;
+    line-height: 1.7;
+  }
+
+  .article-method {
+    margin-top: 36px;
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--surface-2);
+    color: var(--muted-strong);
+    font-size: 0.82rem;
+    line-height: 1.65;
+  }
+
+  .article-method h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .article-method p {
+    margin: 2px 0;
+  }
+
+  .article-related {
+    margin-top: 38px;
+    padding-top: 26px;
+    border-top: 1px solid var(--border);
+  }
+
+  .article-related h2 {
+    font-size: 1.3rem;
+  }
+
+  .article-back {
+    margin-top: 30px;
+  }
+
+  .article-back a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted-strong);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .article-back a:hover {
+    color: var(--text);
+  }
+
+  @media (max-width: 980px) {
+    .article-layout {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .toc-panel {
+      display: none;
+    }
+
+    .toc-mobile {
+      display: block;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .article-header h1 {
+      font-size: 2.1rem;
+    }
+  }
+</style>

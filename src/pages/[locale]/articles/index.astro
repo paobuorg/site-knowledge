@@ -1,0 +1,207 @@
+---
+import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Icon from '@paobu/core/components/Icon.astro';
+import { TOPIC_META, type Locale, LOCALES } from '@paobu/core/lib/i18n';
+import { siteContent } from '../../../lib/content';
+import { contentTypeLabel, knowledgeDetails, knowledgeHref, topicLabel } from '../../../lib/view';
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent();
+const articles = content
+  .visible('knowledge')
+  .filter((entity) => !['learning-path', 'glossary'].includes(knowledgeDetails(entity).contentType))
+  .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.slug.localeCompare(b.slug));
+const copy = locale === 'zh-CN'
+  ? {
+      home: '首页',
+      title: '全部文章',
+      intro: '按更新时间排列。主题页提供同一批文章的另一种入口，不复制正文。',
+      count: `${articles.length} 篇文章`,
+      topics: '按主题浏览',
+      read: '阅读',
+      minutes: '分钟阅读',
+    }
+  : {
+      home: 'Home',
+      title: 'All articles',
+      intro: 'Sorted by update date. Topic pages offer another entry into the same articles without duplicating them.',
+      count: `${articles.length} article${articles.length === 1 ? '' : 's'}`,
+      topics: 'Browse by topic',
+      read: 'Read',
+      minutes: 'min read',
+    };
+const title = `${copy.title} · RunMap`;
+const topics = Array.from(
+  new Map(
+    articles
+      .map((entity) => knowledgeDetails(entity).primaryTopic)
+      .filter((topic, index, all) => all.indexOf(topic) === index)
+      .map((topic) => [topic, TOPIC_META[topic]]),
+  ).entries(),
+);
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={copy.intro}
+  active="knowledge"
+  preview={content.preview}
+>
+  <div class="page-shell">
+    <div class="breadcrumbs">
+      <ol>
+        <li><a href={`/${locale}/`}>{copy.home}</a></li>
+        <li>{copy.title}</li>
+      </ol>
+    </div>
+
+    <div class="page-intro">
+      <div>
+        <span class="pill mint">{copy.count}</span>
+        <h1>{copy.title}</h1>
+        <p>{copy.intro}</p>
+      </div>
+    </div>
+
+    <div class="topic-filter-row">
+      <span class="field-hint">{copy.topics}</span>
+      <div class="filter-row">
+        {topics.map(([topic, meta]) => (
+          <a class="filter-chip" href={`/${locale}/topics/${topic}/`}>
+            <Icon name={meta.icon} size={17} />{topicLabel(topic, locale)}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div class="article-list">
+      {articles.map((entity) => {
+        const translation = content.translation(entity, locale);
+        const details = knowledgeDetails(entity);
+        const meta = TOPIC_META[details.primaryTopic];
+        return (
+          <a class="card article-list-item" href={knowledgeHref(entity, locale)}>
+            <span class={`article-list-icon tone-${meta?.tone ?? 'blue'}`} aria-hidden="true">
+              <Icon name={meta?.icon ?? 'book'} size={24} />
+            </span>
+            <span class="article-list-body">
+              <span class="pill">{topicLabel(details.primaryTopic, locale)}</span>
+              <strong>{translation.title}</strong>
+              <span class="article-list-summary">{translation.summary}</span>
+              <span class="article-list-meta">
+                {contentTypeLabel(details.contentType, locale)} · {translation.readingMinutes} {copy.minutes}
+              </span>
+            </span>
+            <Icon name="arrow-right" size={18} />
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .topic-filter-row {
+    margin: 0 0 26px;
+  }
+
+  .topic-filter-row .field-hint {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .article-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .article-list-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 20px;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 180ms var(--ease), transform 180ms var(--ease), box-shadow 180ms var(--ease);
+  }
+
+  .article-list-item:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .article-list-item > :last-child {
+    flex: 0 0 auto;
+    color: var(--muted);
+  }
+
+  .article-list-icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    flex: 0 0 auto;
+    border-radius: 17px;
+  }
+
+  .article-list-icon.tone-blue { background: var(--blue-soft); }
+  .article-list-icon.tone-mint { background: var(--primary-soft); }
+  .article-list-icon.tone-lavender { background: var(--lavender-soft); }
+  .article-list-icon.tone-yellow { background: var(--yellow-soft); }
+  .article-list-icon.tone-coral { background: var(--coral-soft); }
+  .article-list-icon.tone-pink { background: var(--pink-soft); }
+  .article-list-icon.tone-sky { background: var(--sky-soft); }
+  .article-list-icon.tone-peach { background: var(--peach-soft); }
+  .article-list-icon.tone-sand { background: var(--sand-soft); }
+
+  .article-list-body {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .article-list-body .pill {
+    justify-self: start;
+    margin-bottom: 2px;
+  }
+
+  .article-list-body strong {
+    font-size: 1.06rem;
+    line-height: 1.35;
+  }
+
+  .article-list-summary {
+    color: var(--muted);
+    font-size: 0.87rem;
+    line-height: 1.55;
+  }
+
+  .article-list-meta {
+    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  @media (max-width: 620px) {
+    .article-list-item {
+      align-items: flex-start;
+      padding: 16px;
+    }
+
+    .article-list-item > :last-child {
+      display: none;
+    }
+
+    .article-list-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+    }
+  }
+</style>

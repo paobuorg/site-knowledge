@@ -1,0 +1,121 @@
+---
+import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Icon from '@paobu/core/components/Icon.astro';
+import { TOPIC_IDS, TOPIC_META, type Locale, LOCALES } from '@paobu/core/lib/i18n';
+import { siteContent } from '../../../lib/content';
+import { TOPIC_COPY, knowledgeDetails } from '../../../lib/view';
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent();
+const articles = content.visible('knowledge').filter((entity) => !['learning-path', 'glossary'].includes(knowledgeDetails(entity).contentType));
+const countFor = (topic: string) => articles.filter((entity) => {
+  const details = knowledgeDetails(entity);
+  return details.primaryTopic === topic || details.secondaryTopics.includes(topic);
+}).length;
+const copy = locale === 'zh-CN'
+  ? {
+      home: '首页',
+      title: '九个主题',
+      intro: '主题是阅读入口，不是难度分级。同一篇文章可能出现在多个相关主题中，但正文只有一份。',
+      count: (n: number) => `${n} 篇文章`,
+      empty: '暂无文章',
+    }
+  : {
+      home: 'Home',
+      title: 'Nine topics',
+      intro: 'Topics are reading entries, not difficulty levels. One article can appear under several related topics, but its text exists only once.',
+      count: (n: number) => `${n} article${n === 1 ? '' : 's'}`,
+      empty: 'No articles yet',
+    };
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${copy.title} · RunMap`}
+  description={copy.intro}
+  active="knowledge"
+  preview={content.preview}
+>
+  <div class="page-shell">
+    <div class="breadcrumbs">
+      <ol>
+        <li><a href={`/${locale}/`}>{copy.home}</a></li>
+        <li>{copy.title}</li>
+      </ol>
+    </div>
+
+    <div class="page-intro">
+      <div>
+        <span class="pill mint"><Icon name="layers" size={14} />{copy.title}</span>
+        <h1>{copy.title}</h1>
+        <p>{copy.intro}</p>
+      </div>
+    </div>
+
+    <div class="topic-grid">
+      {TOPIC_IDS.map((topic) => {
+        const meta = TOPIC_META[topic];
+        const count = countFor(topic);
+        return (
+          <a class="topic-tile" href={`/${locale}/topics/${topic}/`} data-tone={meta.tone}>
+            <span class="topic-icon" aria-hidden="true"><Icon name={meta.icon} size={24} /></span>
+            <span class="topic-copy">
+              <h2>{meta[locale === 'zh-CN' ? 'zh' : 'en']}</h2>
+              <p>{TOPIC_COPY[topic][locale === 'zh-CN' ? 'zh' : 'en']}</p>
+              <span class="topic-count">{count > 0 ? copy.count(count) : copy.empty}</span>
+            </span>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .topic-tile[data-tone='blue'] { background: var(--blue-soft); }
+  .topic-tile[data-tone='mint'] { background: var(--primary-soft); }
+  .topic-tile[data-tone='lavender'] { background: var(--lavender-soft); }
+  .topic-tile[data-tone='yellow'] { background: var(--yellow-soft); }
+  .topic-tile[data-tone='coral'] { background: var(--coral-soft); }
+  .topic-tile[data-tone='pink'] { background: var(--pink-soft); }
+  .topic-tile[data-tone='sky'] { background: var(--sky-soft); }
+  .topic-tile[data-tone='peach'] { background: var(--peach-soft); }
+  .topic-tile[data-tone='sand'] { background: var(--sand-soft); }
+
+  .topic-tile h2 {
+    margin: 0 0 2px;
+    font-size: 1rem;
+  }
+
+  .topic-copy {
+    min-width: 0;
+  }
+
+  .topic-count {
+    display: inline-block;
+    margin-top: 6px;
+    color: var(--muted-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .topic-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: 900px) {
+    .topic-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 620px) {
+    .topic-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
