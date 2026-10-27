@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 本地静态站点已实现并通过构建检查，不是已部署网站。六个仓库都没有提交、远程仓库或线上地址。
-- 十六个知识实体已于 2026-10-27 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-27/review/ai-review-report.md)。
+- 本地静态站点已实现并通过构建检查，不是已部署网站。六个公开仓库已推送 GitHub，Pages/DNS 尚未启用。
+- 二十四个知识实体已于 2026-10-27 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-27/review/ai-review-report.md)。
 - 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已定义但未在 GitHub 执行。生产知识可见 24 个实体（23 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
 - 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。
 

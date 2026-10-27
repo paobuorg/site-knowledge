@@ -6,8 +6,8 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 
 ## Status
 
-- The static site is implemented locally and passes its build checks. It is not a deployed site. None of the six repositories has a commit, remote or public URL.
-- All sixteen knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-27; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-27/review/ai-review-report.md).
+- The static site is implemented locally and passes its build checks. It is not a deployed site. All six public repositories have been pushed to GitHub; Pages and DNS are not enabled.
+- All twenty-four knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-27; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-27/review/ai-review-report.md).
 - Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. `.github/workflows/pages.yml` is defined but has not run on GitHub. Production knowledge shows 24 entities (23 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
 - This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site.
 
