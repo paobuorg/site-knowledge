@@ -2,16 +2,18 @@
 import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
 import Icon from '@paobu/core/components/Icon.astro';
 import { TOPIC_META, type Locale, type TopicId, LOCALES, TOPIC_IDS } from '@paobu/core/lib/i18n';
+import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
 import { siteContent } from '../../../lib/content';
 import { TOPIC_COPY, contentTypeLabel, knowledgeDetails, knowledgeHref } from '../../../lib/view';
 
 export function getStaticPaths() {
   return LOCALES.flatMap((locale) =>
-    TOPIC_IDS.map((topic) => ({ params: { locale, topic } })),
+    TOPIC_IDS.map((topic) => ({ params: { locale: localeStaticParam(locale), topic }, props: { locale } })),
   );
 }
 
-const locale = Astro.params.locale as Locale;
+const locale = Astro.props.locale as Locale;
+const prefix = localePrefix(locale);
 const topic = Astro.params.topic as TopicId;
 const content = siteContent();
 const meta = TOPIC_META[topic];
@@ -61,8 +63,8 @@ const title = `${meta[locale === 'zh-CN' ? 'zh' : 'en']} · RunMap`;
   <div class="page-shell">
     <div class="breadcrumbs">
       <ol>
-        <li><a href={`/${locale}/`}>{copy.home}</a></li>
-        <li><a href={`/${locale}/topics/`}>{copy.topics}</a></li>
+        <li><a href={`${prefix}/`}>{copy.home}</a></li>
+        <li><a href={`${prefix}/topics/`}>{copy.topics}</a></li>
         <li>{meta[locale === 'zh-CN' ? 'zh' : 'en']}</li>
       </ol>
     </div>
@@ -81,7 +83,7 @@ const title = `${meta[locale === 'zh-CN' ? 'zh' : 'en']} · RunMap`;
         <Icon name="book" size={42} />
         <h2>{copy.emptyTitle}</h2>
         <p>{copy.emptyBody}</p>
-        <a class="button primary" href={`/${locale}/articles/`}>{copy.allArticles}</a>
+        <a class="button primary" href={`${prefix}/articles/`}>{copy.allArticles}</a>
       </div>
     ) : (
       <div class="topic-article-list">
@@ -109,7 +111,7 @@ const title = `${meta[locale === 'zh-CN' ? 'zh' : 'en']} · RunMap`;
         {TOPIC_IDS.filter((item) => item !== topic).map((item) => {
           const other = TOPIC_META[item];
           return (
-            <a class="filter-chip" href={`/${locale}/topics/${item}/`}>
+            <a class="filter-chip" href={`${prefix}/topics/${item}/`}>
               <Icon name={other.icon} size={16} />{other[locale === 'zh-CN' ? 'zh' : 'en']}
             </a>
           );

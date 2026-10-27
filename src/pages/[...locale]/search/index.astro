@@ -3,13 +3,15 @@ import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
 import Icon from '@paobu/core/components/Icon.astro';
 import SearchField from '@paobu/core/components/SearchField.astro';
 import { t, type Locale, LOCALES } from '@paobu/core/lib/i18n';
+import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
 import { siteContent } from '../../../lib/content';
 
 export function getStaticPaths() {
-  return LOCALES.map((locale) => ({ params: { locale } }));
+  return LOCALES.map((locale) => ({ params: { locale: localeStaticParam(locale) }, props: { locale } }));
 }
 
-const locale = Astro.params.locale as Locale;
+const locale = Astro.props.locale as Locale;
+const prefix = localePrefix(locale);
 const content = siteContent();
 const articleCount = content
   .visible('knowledge')
@@ -78,7 +80,7 @@ const copy = locale === 'zh-CN'
   >
     <div class="breadcrumbs">
       <ol>
-        <li><a href={`/${locale}/`}>{t(locale, 'home')}</a></li>
+        <li><a href={`${prefix}/`}>{t(locale, 'home')}</a></li>
         <li>{copy.title}</li>
       </ol>
     </div>
@@ -92,7 +94,7 @@ const copy = locale === 'zh-CN'
     </div>
 
     <div class="search-page-form">
-      <SearchField locale={locale} action={`/${locale}/search/`} id="search-page-input" />
+      <SearchField locale={locale} action={`${prefix}/search/`} id="search-page-input" />
     </div>
 
     <div class="search-scope">
@@ -112,7 +114,7 @@ const copy = locale === 'zh-CN'
       <Icon name="search" size={42} />
       <h2>{copy.noResultsTitle}</h2>
       <p>{copy.noResultsBody}</p>
-      <a class="button primary" href={`/${locale}/topics/`}>{copy.browse}</a>
+      <a class="button primary" href={`${prefix}/topics/`}>{copy.browse}</a>
     </div>
 
     <div class="notice tone-blue search-hint">

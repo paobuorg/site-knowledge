@@ -1,5 +1,6 @@
 import type { ContentEntity, KnowledgeDetails } from '@paobu/core/content';
 import { TOPIC_META, type Locale, type TopicId } from '@paobu/core/lib/i18n';
+import { localePrefix } from '@paobu/core/lib/routing';
 import { siteOrigin } from '@paobu/core/lib/sites';
 
 export const TOPIC_COPY: Record<TopicId, { zh: string; en: string }> = {
@@ -36,13 +37,14 @@ export function knowledgeSection(entity: ContentEntity): 'articles' | 'glossary'
 }
 
 export function knowledgeHref(entity: ContentEntity, locale: Locale): string {
-  return `/${locale}/${knowledgeSection(entity)}/${entity.slug}/`;
+  return `${localePrefix(locale)}/${knowledgeSection(entity)}/${entity.slug}/`;
 }
 
 export function entityHref(entity: ContentEntity, locale: Locale): string {
+  const prefix = localePrefix(locale);
   if (entity.kind === 'knowledge') return knowledgeHref(entity, locale);
-  if (entity.kind === 'route') return `${siteOrigin('routes')}/${locale}/routes/${entity.slug}/`;
-  return `${siteOrigin('tools')}/${locale}/tools/${entity.slug}/`;
+  if (entity.kind === 'route') return `${siteOrigin('routes')}${prefix}/routes/${entity.slug}/`;
+  return `${siteOrigin('tools')}${prefix}/tools/${entity.slug}/`;
 }
 
 export function topicLabel(topic: string, locale: Locale): string {

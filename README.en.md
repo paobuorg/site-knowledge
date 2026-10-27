@@ -16,7 +16,7 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 - Node.js `>=22.23.4 <25`, pnpm 10.18.3, Astro 7.4.2, TypeScript 5.9.3.
 - `output: 'static'` with directory-style trailing slashes; canonical origin `https://learn.paobu.org`.
 - Pagefind 1.5.2 builds the local index after the static build.
-- `@paobu/core` 0.2.13, installed from `vendor/paobu-core.tgz`; `core.lock.json` records artifact SHA-256 `b3e5b077614b661c0c553ef1b600386d9a946bef83a458afd0c0889f7a1efb03`.
+- `@paobu/core` 0.2.14, installed from `vendor/paobu-core.tgz`; `core.lock.json` records artifact SHA-256 `1fcda15d29b7e1de0240ea8b6061f92fc8dc7887a2469c85a3011584bd2bcd89`.
 
 ## Layout
 
@@ -46,7 +46,7 @@ pnpm build
 pnpm dev
 ```
 
-- Development: `http://localhost:4322`, with `/zh-CN/` and `/en/` entry points.
+- Development: `http://localhost:4322`, with `/` and `/en/` entry points.
 - Built preview: `pnpm preview`, `http://localhost:4422`. Cross-site links are baked from the `.env` that is actually loaded (currently the development ports), so following them locally also needs those sites running; a production build must explicitly override all three origins, otherwise localhost values enter the HTML.
 - Build: `pnpm build` runs the Astro static build and then Pagefind. Failed content validation stops it.
 - Content validation: `pnpm test:content`.

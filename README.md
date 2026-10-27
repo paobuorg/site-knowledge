@@ -16,7 +16,7 @@
 - Node.js `>=22.23.4 <25`，pnpm 10.18.3，Astro 7.4.2，TypeScript 5.9.3。
 - `output: 'static'`、尾斜杠目录输出，规范域名为 `https://learn.paobu.org`。
 - Pagefind 1.5.2 在构建后生成本站索引。
-- `@paobu/core` 0.2.13，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录制品 SHA-256 `b3e5b077614b661c0c553ef1b600386d9a946bef83a458afd0c0889f7a1efb03`。
+- `@paobu/core` 0.2.14，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录制品 SHA-256 `1fcda15d29b7e1de0240ea8b6061f92fc8dc7887a2469c85a3011584bd2bcd89`。
 
 ## 目录
 
@@ -46,7 +46,7 @@ pnpm build
 pnpm dev
 ```
 
-- 开发：`http://localhost:4322`，语言入口 `/zh-CN/` 与 `/en/`。
+- 开发：`http://localhost:4322`，语言入口 `/` 与 `/en/`。
 - 预览构建：`pnpm preview`，`http://localhost:4422`。构建时跨站链接按实际加载的 `.env` 生成（当前指向开发端口），验证跳转需同时运行对应站点；生产构建必须显式覆盖三个来源，否则 `.env` 的 localhost 会进入 HTML。
 - 构建：`pnpm build` 执行 Astro 静态构建和 Pagefind 后处理；内容校验失败会中止。
 - 内容校验：`pnpm test:content`。
