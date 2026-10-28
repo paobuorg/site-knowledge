@@ -1,6 +1,6 @@
 {
-  "name": "跑地图知识 · RunMap Learn",
-  "short_name": "跑地图知识",
+  "name": "跑起来知识 · RUNUP Learn",
+  "short_name": "跑起来知识",
   "description": "可追溯的跑步知识：训练、恢复、营养、健康与安全。",
   "lang": "zh-CN",
   "start_url": "/",
@@ -14,6 +14,24 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Bean from '@paobu/core/components/Bean.astro';
 import Icon from '@paobu/core/components/Icon.astro';
 import SearchField from '@paobu/core/components/SearchField.astro';
 import { t, TOPIC_IDS, TOPIC_META, type Locale, LOCALES } from '@paobu/core/lib/i18n';
@@ -115,7 +116,7 @@ const copy = locale === 'zh-CN'
       step: 'Step {n}',
       previewNote: 'This is a preview build; some articles are still being checked.',
     };
-const title = `${copy.title} · RunMap`;
+const title = `${copy.title} · RUNUP`;
 ---
 
 <BaseLayout
@@ -134,6 +135,7 @@ const title = `${copy.title} · RunMap`;
         <p class="knowledge-intro">{copy.intro}</p>
       </div>
       <div class="knowledge-search">
+        <Bean expression="book" size={104} className="hero-mascot" label={locale === 'zh-CN' ? '豆客在读一页' : 'Douke reading a page'} />
         <SearchField
           locale={locale}
           action={`${prefix}/search/`}
@@ -287,7 +289,15 @@ const title = `${copy.title} · RunMap`;
   }
 
   .knowledge-search {
+    display: grid;
+    justify-items: end;
+    gap: 12px;
     padding-bottom: 6px;
+  }
+
+  .hero-mascot {
+    width: 104px;
+    height: 104px;
   }
 
   .section-hint {
@@ -396,6 +406,15 @@ const title = `${copy.title} · RunMap`;
     .knowledge-hero {
       grid-template-columns: 1fr;
       gap: 20px;
+    }
+
+    .knowledge-search {
+      justify-items: start;
+    }
+
+    .hero-mascot {
+      width: 84px;
+      height: 84px;
     }
 
     .topic-grid {

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Bean from '@paobu/core/components/Bean.astro';
 import Icon from '@paobu/core/components/Icon.astro';
 import SearchField from '@paobu/core/components/SearchField.astro';
 import { t, type Locale, LOCALES } from '@paobu/core/lib/i18n';
@@ -20,7 +21,7 @@ const articleCount = content
 const copy = locale === 'zh-CN'
   ? {
       title: '搜索知识',
-      intro: '在跑地图知识站的文章正文中搜索。索引由构建快照生成，不请求外部搜索服务。',
+      intro: '在跑起来知识站的文章正文中搜索。索引由构建快照生成，不请求外部搜索服务。',
       scope: '搜索范围',
       scopeLocal: '知识站 · 仅当前语言 · 不含其他两站',
       language: '中文',
@@ -42,7 +43,7 @@ const copy = locale === 'zh-CN'
     }
   : {
       title: 'Search knowledge',
-      intro: 'Search article text on RunMap Learn. The index is built from a fixed content snapshot, with no external search service.',
+      intro: 'Search article text on RunUp Learn. The index is built from a fixed content snapshot, with no external search service.',
       scope: 'Search scope',
       scopeLocal: 'Learn site · current language only · routes and tools excluded',
       language: 'English',
@@ -66,7 +67,7 @@ const copy = locale === 'zh-CN'
 
 <BaseLayout
   locale={locale}
-  title={`${copy.title} · RunMap`}
+  title={`${copy.title} · RUNUP`}
   description={copy.intro}
   active="knowledge"
   preview={content.preview}
@@ -111,7 +112,7 @@ const copy = locale === 'zh-CN'
     </div>
 
     <div class="empty-state" data-search-empty hidden>
-      <Icon name="search" size={42} />
+      <Bean expression="search" size={92} className="empty-mascot" />
       <h2>{copy.noResultsTitle}</h2>
       <p>{copy.noResultsBody}</p>
       <a class="button primary" href={`${prefix}/topics/`}>{copy.browse}</a>

@@ -99,7 +99,7 @@ const other = otherLocale(locale);
 const relatedKnowledge = related.filter((item) => item.kind === 'knowledge');
 const relatedRoutes = related.filter((item) => item.kind === 'route');
 const relatedTools = related.filter((item) => item.kind === 'tool');
-const title = `${translation.title} · RunMap`;
+const title = `${translation.title} · RUNUP`;
 const pageOrigin = Astro.site ?? Astro.url.origin;
 const pageUrl = new URL(`${prefix}/glossary/${entity.slug}/`, pageOrigin).toString();
 const structuredData = [
@@ -132,6 +132,7 @@ const structuredData = [
   ogType="article"
   alternateHref={`${localePrefix(other)}/glossary/${entity.slug}/`}
   structuredData={structuredData}
+  footerAd
 >
   <div class="page-shell">
     <div class="breadcrumbs">
