@@ -100,6 +100,10 @@ const relatedKnowledge = related.filter((item) => item.kind === 'knowledge');
 const relatedRoutes = related.filter((item) => item.kind === 'route');
 const relatedTools = related.filter((item) => item.kind === 'tool');
 const title = `${translation.title} · RUNUP`;
+const metaDescription =
+  translation.summary.length > 160
+    ? `${translation.summary.slice(0, 157).replace(/\s+\S*$/, '')}…`
+    : translation.summary;
 const pageOrigin = Astro.site ?? Astro.url.origin;
 const pageUrl = new URL(`${prefix}/articles/${entity.slug}/`, pageOrigin).toString();
 const structuredData = [
@@ -126,12 +130,13 @@ const structuredData = [
 <BaseLayout
   locale={locale}
   title={title}
-  description={translation.summary}
+  description={metaDescription}
   active="knowledge"
   preview={content.preview}
   ogType="article"
   alternateHref={`${localePrefix(other)}/articles/${entity.slug}/`}
   structuredData={structuredData}
+  modifiedTime={entity.updatedAt}
   footerAd
 >
   <div class="page-shell">
