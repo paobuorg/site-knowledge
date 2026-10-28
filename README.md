@@ -7,9 +7,9 @@
 ## 当前状态
 
 - 知识站已部署到 GitHub Pages，线上地址为 `https://learn.paobu.org/`；Pages 与 HTTPS 已启用。
-- 四十三个知识实体已于 2026-10-28 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md)。
-- 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已成功部署，`https://learn.paobu.org/` 已启用 HTTPS。当前 71 实体生产构建中，知识站有 117 个静态页面、发布清单 114 页、Pagefind 86 条记录、sitemap 114 个 URL；生产知识可见 43 个实体（42 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
-- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。K1/K2/K3 批次与法律/文风更新已于 2026-10-28 完成；知识站新增中英文 `/legal/` 页面，文章页显示简短法律提示，正文已清理编辑台措辞与旧 `/zh-CN/` 链接。K2 新增步频、上下坡、路面、比赛补给、咖啡因、跑鞋合脚、山径导航和赛后恢复八篇。
+- 四十八个知识实体已于 2026-10-28 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md)。
+- 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已成功部署，`https://learn.paobu.org/` 已启用 HTTPS。当前 76 实体生产构建中，知识站有 127 个静态页面、发布清单 124 页、Pagefind 96 条记录、sitemap 124 个 URL；生产知识可见 48 个实体（47 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
+- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。K1–K4 批次与法律/文风更新已于 2026-10-28 完成；知识站新增中英文 `/legal/` 页面，文章页显示简短法律提示，正文已清理编辑台措辞与旧 `/zh-CN/` 链接。K2 新增步频、上下坡、路面、比赛补给、咖啡因、跑鞋合脚、山径导航和赛后恢复八篇。
 
 ## 技术基线
 
@@ -51,7 +51,7 @@ pnpm dev
 - 构建：`pnpm build` 执行 Astro 静态构建和 Pagefind 后处理；内容校验失败会中止。
 - 内容校验：`pnpm test:content`。
 - 类型与 Astro 检查：`pnpm check`。
-- 生产模式：`PREVIEW_UNREVIEWED=0 pnpm build` 生成发布文件；`pnpm check:production` 当前通过（43 个知识实体已发布）。
+- 生产模式：`PREVIEW_UNREVIEWED=0 pnpm build` 生成发布文件；`pnpm check:production` 当前通过（48 个知识实体已发布）。
 - 注意：本仓库的 `pnpm test` 目前没有测试文件；不要把空测试套件当作验证证据。
 
 核心升级流程：在 `site-www` 运行 `pnpm core:pack`，在此运行 `pnpm core:sync && pnpm install --force`，确认 `core.lock.json` 与安装版本一致。不要改用 `workspace:*`，也不要复制 `packages/core` 源码。
