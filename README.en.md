@@ -7,9 +7,9 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 ## Status
 
 - The knowledge site is deployed on GitHub Pages at `https://learn.paobu.org/`; Pages and HTTPS are enabled.
-- All twenty-four knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-27; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-27/review/ai-review-report.md).
-- Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. The Pages workflow has deployed successfully and `https://learn.paobu.org/` enforces HTTPS. Production knowledge shows 24 entities (23 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
-- This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site.
+- All twenty-eight knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-28; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md).
+- Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. The Pages workflow has deployed successfully and `https://learn.paobu.org/` enforces HTTPS. In the current 56-entity production build the knowledge site has 86 static pages, 82 manifest pages, 56 Pagefind records and 82 sitemap URLs. Production knowledge shows 28 entities (27 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
+- This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site. The K1 batch (tempo/intervals, load and overtraining, heat and humidity, shoe technology) is in the local build; push and Pages verification are recorded in the site-www release evidence.
 
 ## Technical baseline
 
@@ -21,7 +21,7 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 ## Layout
 
 ```text
-src/pages/                [locale] home, article list/detail, topic collections, search and 404
+src/pages/                [...locale] home, article list/detail, topic collections, search and 404
 src/lib/content.ts        Site content loading, including the preview switch
 src/lib/view.ts           Topic copy and knowledge-detail formatting
 scripts/sync-core.mjs     Verifies and syncs the core tgz from site-www/core-dist
@@ -51,7 +51,7 @@ pnpm dev
 - Build: `pnpm build` runs the Astro static build and then Pagefind. Failed content validation stops it.
 - Content validation: `pnpm test:content`.
 - Type and Astro checks: `pnpm check`.
-- Production mode: `PREVIEW_UNREVIEWED=0 pnpm build` emits the release files; `pnpm check:production` currently passes with all 24 knowledge entities published.
+- Production mode: `PREVIEW_UNREVIEWED=0 pnpm build` emits the release files; `pnpm check:production` currently passes with all 28 knowledge entities published.
 - Note: `pnpm test` currently has no test files in this repository. Do not present an empty suite as verification evidence.
 
 Core upgrade: run `pnpm core:pack` in `site-www`, then `pnpm core:sync && pnpm install --force` here, and confirm that `core.lock.json` matches the installed version. Do not switch to `workspace:*` and do not copy `packages/core` source.
@@ -74,13 +74,13 @@ node scripts/content-lock.mjs          # regenerate content.lock.json for all th
 node scripts/content-lock.mjs --verify # check that the content trees are unchanged
 ```
 
-The `sha256-tree-v1` lock covers `content/`, `data/` and `assets/` in all three content repositories. There are no Git commits yet, so each lock records `commit: null`; replace it with a pinned full SHA once commits and remotes exist. The lock supports reproducible local builds and does not replace version control.
+The `sha256-tree-v1` lock covers `content/`, `data/` and `assets/` in all three content repositories. Each lock pins a full commit SHA: `running-routes` `0cd00cda…`, `running-knowledge` `a879da16…`, `running-tools` `4a8a3885…`. The lock supports reproducible local builds and does not replace version control.
 
 ## External configuration and release boundary
 
 - Internal links use real static paths and depend on no server-side rendering, runtime secret or custom response header.
 - Cross-site links use `PUBLIC_ROUTES_ORIGIN`, `PUBLIC_KNOWLEDGE_ORIGIN` and `PUBLIC_TOOLS_ORIGIN`; production defaults live in the core and the local `.env` points to the three local ports.
-- The GitHub owner, repository access, DNS and Pages settings are not available, so no workflow or deployment was created. Do not describe the local build as a live site.
+- GitHub repositories, DNS and Pages are configured: the six repositories live under `paobuorg`, and all three sites are live on custom domains with HTTPS. This workflow uses the `PAOBU_CORE_ARTIFACT_URL` and `PAOBU_CORE_SHA256` repository variables. The K1 push still needs live-article verification before the local build is described as deployed.
 
 ## Licence
 
@@ -88,4 +88,4 @@ The `sha256-tree-v1` lock covers `content/`, `data/` and `assets/` in all three 
 - Knowledge articles: under the `running-knowledge` repository licence; new text is CC BY 4.0.
 - Third-party sources, images and quoted excerpts keep their own terms.
 
-Last checked: 2026-10-27.
+Last checked: 2026-10-28.

@@ -7,9 +7,9 @@
 ## 当前状态
 
 - 知识站已部署到 GitHub Pages，线上地址为 `https://learn.paobu.org/`；Pages 与 HTTPS 已启用。
-- 二十四个知识实体已于 2026-10-27 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-27/review/ai-review-report.md)。
-- 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已成功部署，`https://learn.paobu.org/` 已启用 HTTPS。生产知识可见 24 个实体（23 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
-- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。
+- 二十八个知识实体已于 2026-10-28 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md)。
+- 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已成功部署，`https://learn.paobu.org/` 已启用 HTTPS。当前 56 实体生产构建中，知识站有 86 个静态页面、发布清单 82 页、Pagefind 56 条记录、sitemap 82 个 URL；生产知识可见 28 个实体（27 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
+- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。K1 批次（节奏/间歇、负荷与过度训练、高温高湿、鞋科技）已进入本地构建；推送与 Pages 复核记录在 site-www 的发布证据中。
 
 ## 技术基线
 
@@ -21,7 +21,7 @@
 ## 目录
 
 ```text
-src/pages/                [locale] 首页、文章列表/详情、主题聚合、搜索与 404
+src/pages/                [...locale] 首页、文章列表/详情、主题聚合、搜索与 404
 src/lib/content.ts        本站内容加载（含预览开关）
 src/lib/view.ts           主题文案与知识详情格式
 scripts/sync-core.mjs     从 site-www/core-dist 校验并同步核心 tgz
@@ -51,7 +51,7 @@ pnpm dev
 - 构建：`pnpm build` 执行 Astro 静态构建和 Pagefind 后处理；内容校验失败会中止。
 - 内容校验：`pnpm test:content`。
 - 类型与 Astro 检查：`pnpm check`。
-- 生产模式：`PREVIEW_UNREVIEWED=0 pnpm build` 生成发布文件；`pnpm check:production` 当前通过（24 个知识实体已发布）。
+- 生产模式：`PREVIEW_UNREVIEWED=0 pnpm build` 生成发布文件；`pnpm check:production` 当前通过（28 个知识实体已发布）。
 - 注意：本仓库的 `pnpm test` 目前没有测试文件；不要把空测试套件当作验证证据。
 
 核心升级流程：在 `site-www` 运行 `pnpm core:pack`，在此运行 `pnpm core:sync && pnpm install --force`，确认 `core.lock.json` 与安装版本一致。不要改用 `workspace:*`，也不要复制 `packages/core` 源码。
@@ -74,13 +74,13 @@ node scripts/content-lock.mjs          # 重新生成三个站点的 content.loc
 node scripts/content-lock.mjs --verify # 校验内容树未变化
 ```
 
-`sha256-tree-v1` 覆盖三个内容仓库的 `content/`、`data/` 和 `assets/`。当前没有 Git 提交，锁中的 `commit` 为 `null`；建立提交与远程后应替换为固定完整 SHA。锁用于本地可复现构建，不代替 Git。
+`sha256-tree-v1` 覆盖三个内容仓库的 `content/`、`data/` 和 `assets/`。锁中的 `commit` 已固定为完整 SHA：`running-routes` `0cd00cda…`、`running-knowledge` `a879da16…`、`running-tools` `4a8a3885…`。锁用于本地可复现构建，不代替 Git。
 
 ## 外部配置与发布边界
 
 - 站内链接使用真实静态路径，不依赖服务端 SSR、运行时秘密或自定义响应头。
 - 跨子域链接使用 `PUBLIC_ROUTES_ORIGIN`、`PUBLIC_KNOWLEDGE_ORIGIN` 与 `PUBLIC_TOOLS_ORIGIN`；生产默认值在核心中，本地 `.env` 指向三个本地端口。
-- GitHub owner、仓库访问、DNS 与 Pages 设置未提供，因此没有创建流水线或部署；不要据本地构建声称线上可用。
+- GitHub 仓库、DNS 与 Pages 已配置：六个仓库位于 `paobuorg`，三站 Pages 已上线并启用 HTTPS。本仓库工作流使用 `PAOBU_CORE_ARTIFACT_URL`、`PAOBU_CORE_SHA256` 仓库变量；K1 批次推送后需重新核对线上文章，未复核前不把本地构建当作已上线证据。
 
 ## 许可
 
@@ -88,4 +88,4 @@ node scripts/content-lock.mjs --verify # 校验内容树未变化
 - 知识与正文：`running-knowledge` 仓库许可；新写正文为 CC BY 4.0。
 - 第三方来源、图片和引用片段保留各自权利。
 
-最后核对日期：2026-10-27。
+最后核对日期：2026-10-28。

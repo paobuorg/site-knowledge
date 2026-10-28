@@ -48,21 +48,21 @@ const paths = [
     body: locale === 'zh-CN'
       ? '用谈话测试、动作观察和训练结构，把快慢与恢复放在一起理解。'
       : 'Connect talk-test effort, form observation and weekly structure instead of chasing one pace.',
-    steps: ['easy-run', 'running-form', 'training-week', 'long-run'],
+    steps: ['easy-run', 'running-form', 'tempo-and-intervals', 'training-week', 'long-run'],
   },
   {
     title: locale === 'zh-CN' ? '首场半马/马拉松准备' : 'First half or marathon',
     body: locale === 'zh-CN'
       ? '从训练周、长距离和补给，到力量、减量、比赛距离、疼痛判断与恢复。'
       : 'From weekly training and long runs to fuelling, strength, tapering, race distance, pain judgement and recovery.',
-    steps: ['training-week', 'long-run', 'long-run-fueling', 'hydration', 'strength-and-taper', 'daily-fueling', 'training-log', 'marathon-distance', 'pain-and-load'],
+    steps: ['training-week', 'long-run', 'long-run-fueling', 'hydration', 'heat-and-humidity', 'strength-and-taper', 'daily-fueling', 'training-log', 'load-and-overtraining', 'tempo-and-intervals', 'marathon-distance', 'pain-and-load'],
   },
   {
     title: locale === 'zh-CN' ? '入门越野' : 'Start trail running',
     body: locale === 'zh-CN'
       ? '先读路线与天气，再准备鞋、照明、背包、补水和可撤退计划。'
       : 'Read route and weather first, then prepare shoes, light, pack, fluids and an escape plan.',
-    steps: ['route-safety', 'running-shoes', 'trail-gear', 'cold-weather-running', 'long-run-fueling', 'hydration', 'watch-gps'],
+    steps: ['route-safety', 'running-shoes', 'trail-gear', 'cold-weather-running', 'heat-and-humidity', 'long-run-fueling', 'hydration', 'watch-gps'],
   },
   {
     title: locale === 'zh-CN' ? '读懂经典赛道' : 'Read classic courses',
@@ -353,14 +353,18 @@ const title = `${copy.title} · RunMap`;
   .path-step-number {
     display: grid;
     place-items: center;
-    width: 22px;
+    min-width: 26px;
+    width: max-content;
     height: 22px;
+    padding: 0 6px;
+    box-sizing: border-box;
     flex: 0 0 auto;
-    border-radius: 50%;
-    background: var(--lavender-soft);
-    color: #5c46a5;
-    font-size: 0.68rem;
+    border-radius: 999px;
+    background: #ddd6fe;
+    color: #35266b;
+    font-size: 0.64rem;
     font-weight: 800;
+    line-height: 1;
   }
 
   .text-link {
