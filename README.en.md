@@ -7,8 +7,8 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 ## Status
 
 - The knowledge site is deployed on GitHub Pages at `https://learn.paobu.org/`; Pages and HTTPS are enabled.
-- All forty-eight knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-28; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md).
-- Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. The Pages workflow has deployed successfully and `https://learn.paobu.org/` enforces HTTPS. In the current 76-entity production build the knowledge site has 127 static pages, 124 manifest pages, 96 Pagefind records and 124 sitemap URLs. Production knowledge shows 48 entities (47 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
+- All fifty-one knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-28; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md).
+- Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. The Pages workflow has deployed successfully and `https://learn.paobu.org/` enforces HTTPS. In the current 79-entity production build the knowledge site has 133 static pages, 130 manifest pages, 102 Pagefind records and 130 sitemap URLs. Production knowledge shows 51 entities (50 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
 - This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site. The K1–K4 batches and the legal/tone update were completed on 2026-10-28; the knowledge site now has bilingual `/legal/` pages, article-level legal notices, and cleaned article copy without editorial-desk wording or legacy `/zh-CN/` links.
 
 ## Technical baseline
@@ -51,7 +51,7 @@ pnpm dev
 - Build: `pnpm build` runs the Astro static build and then Pagefind. Failed content validation stops it.
 - Content validation: `pnpm test:content`.
 - Type and Astro checks: `pnpm check`.
-- Production mode: `PREVIEW_UNREVIEWED=0 pnpm build` emits the release files; `pnpm check:production` currently passes with all 48 knowledge entities published.
+- Production mode: `PREVIEW_UNREVIEWED=0 pnpm build` emits the release files; `pnpm check:production` currently passes with all 51 knowledge entities published.
 - Note: `pnpm test` currently has no test files in this repository. Do not present an empty suite as verification evidence.
 
 Core upgrade: run `pnpm core:pack` in `site-www`, then `pnpm core:sync && pnpm install --force` here, and confirm that `core.lock.json` matches the installed version. Do not switch to `workspace:*` and do not copy `packages/core` source.
