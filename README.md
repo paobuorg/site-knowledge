@@ -8,15 +8,15 @@
 
 - 知识站已部署到 GitHub Pages，线上地址为 `https://learn.paobu.org/`；Pages 与 HTTPS 已启用。
 - 二十八个知识实体已于 2026-10-28 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md)。
-- 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已成功部署，`https://learn.paobu.org/` 已启用 HTTPS。当前 56 实体生产构建中，知识站有 86 个静态页面、发布清单 82 页、Pagefind 56 条记录、sitemap 82 个 URL；生产知识可见 28 个实体（27 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
-- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。K1 批次（节奏/间歇、负荷与过度训练、高温高湿、鞋科技）已于 2026-10-28 推送并完成 Pages 复核，线上文章与本地构建的 56 条记录一致。
+- 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已成功部署，`https://learn.paobu.org/` 已启用 HTTPS。当前 56 实体生产构建中，知识站有 88 个静态页面、发布清单 84 页、Pagefind 56 条记录、sitemap 84 个 URL；生产知识可见 28 个实体（27 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
+- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。K1 批次与法律/文风更新已于 2026-10-28 完成；知识站新增中英文 `/legal/` 页面，文章页显示简短法律提示，正文已清理编辑台措辞与旧 `/zh-CN/` 链接。
 
 ## 技术基线
 
 - Node.js `>=22.23.4 <25`，pnpm 10.18.3，Astro 7.4.2，TypeScript 5.9.3。
 - `output: 'static'`、尾斜杠目录输出，规范域名为 `https://learn.paobu.org`。
 - Pagefind 1.5.2 在构建后生成本站索引。
-- `@paobu/core` 0.2.14，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录制品 SHA-256 `1fcda15d29b7e1de0240ea8b6061f92fc8dc7887a2469c85a3011584bd2bcd89`。
+- `@paobu/core` 0.2.15，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录制品 SHA-256 `8e2645102a7a8ebcabf56db44ceb49c4d16df54478be489919979fb4a72eaeae`。
 
 ## 目录
 

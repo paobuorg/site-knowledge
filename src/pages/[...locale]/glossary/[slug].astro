@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
 import Icon from '@paobu/core/components/Icon.astro';
-import { otherLocale, type Locale, LOCALES, TOPIC_META } from '@paobu/core/lib/i18n';
+import LegalNotice from '@paobu/core/components/LegalNotice.astro';
+import { contributorName, otherLocale, type Locale, LOCALES, TOPIC_META } from '@paobu/core/lib/i18n';
 import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
 import { articleData, breadcrumbList } from '@paobu/core/lib/seo';
 import { siteContent } from '../../../lib/content';
@@ -36,14 +37,11 @@ const translation = content.translation(entity, locale);
 const details = knowledgeDetails(entity);
 const sources = content.sourcesFor(entity);
 const related = content.related(entity, locale);
-const reviews = content.reviews.filter(
-  (review) => review.entityId === entity.entityId && review.locale === locale,
-);
 const authors = [
   ...new Set(
     entity.translations
       .flatMap((item) => item.authors)
-      .map((id) => content.contributors.find((person) => person.contributorId === id)?.displayName ?? id),
+      .map((id) => contributorName(id, content.contributors.find((person) => person.contributorId === id)?.displayName ?? id, locale)),
   ),
 ];
 const topicMeta = TOPIC_META[details.primaryTopic];
@@ -58,19 +56,19 @@ const copy = locale === 'zh-CN'
       summaryTitle: '这篇讲什么',
       audience: '适用对象',
       updated: '更新于',
-      reviewed: '审阅于',
+      reviewed: '核验于',
       minutes: '分钟阅读',
-      reviewPending: '编辑审阅中',
-      reviewNote: '本文仍在编辑审阅中，尚未完成发布所需的专业审阅。表述与数字可能调整。',
+      reviewPending: '校对中',
+      reviewNote: '本页尚在校对中，表述与数字可能调整。',
       sourcesTitle: '来源与证据',
       accessed: '查阅',
       relatedTitle: '相关内容',
       relatedKnowledge: '关联知识',
       relatedRoutes: '关联赛道',
       relatedTools: '关联工具',
-      methodTitle: '版本与审阅',
+      methodTitle: '版本与核验',
       authors: '撰写',
-      noReview: '尚无审阅记录',
+      noReview: '尚无核验记录',
       back: '返回术语表',
       emptyRelated: '暂无已发布的相关内容。',
     }
@@ -81,19 +79,19 @@ const copy = locale === 'zh-CN'
       summaryTitle: 'What this covers',
       audience: 'Who it is for',
       updated: 'Updated',
-      reviewed: 'Reviewed',
+      reviewed: 'Checked',
       minutes: 'min read',
-      reviewPending: 'In editorial review',
-      reviewNote: 'This article is still in editorial review and has not completed the specialist review required for publication. Wording and figures may change.',
+      reviewPending: 'Being checked',
+      reviewNote: 'This page is being checked; wording and figures may change.',
       sourcesTitle: 'Sources and evidence',
       accessed: 'Accessed',
       relatedTitle: 'Related',
       relatedKnowledge: 'Related knowledge',
       relatedRoutes: 'Related routes',
       relatedTools: 'Related tools',
-      methodTitle: 'Version and review',
+      methodTitle: 'Version and checks',
       authors: 'Written by',
-      noReview: 'No review record yet',
+      noReview: 'No check record yet',
       back: 'Back to glossary',
       emptyRelated: 'No related published content yet.',
     };
@@ -218,7 +216,7 @@ const structuredData = [
           <h2 id="method-heading">{copy.methodTitle}</h2>
           <p>{copy.authors}: {authors.join(', ')}</p>
           <p>{copy.updated}: {formatDate(entity.updatedAt, locale)}</p>
-          <p>{copy.reviewed}: {formatDate(entity.reviewedAt, locale)} · {reviews.length ? (locale === 'zh-CN' ? `${reviews.length} 条审阅记录` : `${reviews.length} review record(s)`) : copy.noReview}</p>
+          <p>{copy.reviewed}: {formatDate(entity.reviewedAt, locale)}</p>
         </section>
 
         <section class="article-related" aria-labelledby="related-heading">
@@ -264,6 +262,8 @@ const structuredData = [
             </>
           )}
         </section>
+
+        <LegalNotice locale={locale} context="article" />
 
         <p class="article-back"><a href={`${prefix}/glossary/`}><Icon name="arrow-left" size={15} />{copy.back}</a></p>
       </div>

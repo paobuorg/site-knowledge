@@ -8,15 +8,15 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 
 - The knowledge site is deployed on GitHub Pages at `https://learn.paobu.org/`; Pages and HTTPS are enabled.
 - All twenty-eight knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-28; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md).
-- Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. The Pages workflow has deployed successfully and `https://learn.paobu.org/` enforces HTTPS. In the current 56-entity production build the knowledge site has 86 static pages, 82 manifest pages, 56 Pagefind records and 82 sitemap URLs. Production knowledge shows 28 entities (27 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
-- This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site. The K1 batch (tempo/intervals, load and overtraining, heat and humidity, shoe technology) was pushed and verified on Pages on 2026-10-28; the live articles match the local 56-record build.
+- Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. The Pages workflow has deployed successfully and `https://learn.paobu.org/` enforces HTTPS. In the current 56-entity production build the knowledge site has 88 static pages, 84 manifest pages, 56 Pagefind records and 84 sitemap URLs. Production knowledge shows 28 entities (27 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
+- This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site. The K1 batch and the legal/tone update were completed on 2026-10-28; the knowledge site now has bilingual `/legal/` pages, article-level legal notices, and cleaned article copy without editorial-desk wording or legacy `/zh-CN/` links.
 
 ## Technical baseline
 
 - Node.js `>=22.23.4 <25`, pnpm 10.18.3, Astro 7.4.2, TypeScript 5.9.3.
 - `output: 'static'` with directory-style trailing slashes; canonical origin `https://learn.paobu.org`.
 - Pagefind 1.5.2 builds the local index after the static build.
-- `@paobu/core` 0.2.14, installed from `vendor/paobu-core.tgz`; `core.lock.json` records artifact SHA-256 `1fcda15d29b7e1de0240ea8b6061f92fc8dc7887a2469c85a3011584bd2bcd89`.
+- `@paobu/core` 0.2.15, installed from `vendor/paobu-core.tgz`; `core.lock.json` records artifact SHA-256 `8e2645102a7a8ebcabf56db44ceb49c4d16df54478be489919979fb4a72eaeae`.
 
 ## Layout
 

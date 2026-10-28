@@ -76,12 +76,12 @@ const copy = locale === 'zh-CN'
   ? {
       title: '跑步知识',
       subtitle: '更科学地跑，更长久地跑',
-      intro: '围绕训练、恢复、营养与安全的常青知识。每篇正文都保留来源、适用条件与审阅状态。',
+      intro: '围绕训练、恢复、营养与安全的常青知识。每篇正文都保留来源、适用条件与核对状态。',
       searchPlaceholder: '搜索文章、主题或关键词',
       topicsTitle: '九大主题',
       topicsHint: '主题色块是阅读入口，不是难度分级。',
       pathsTitle: '学习路径',
-      pathsHint: '按顺序阅读已审阅文章；路径不复制正文。',
+      pathsHint: '按顺序阅读已核验文章；路径不复制正文。',
       glossaryTitle: '术语表',
       glossaryHint: '配速、RPE、步频、爬升与文件格式的共同定义。',
       glossaryLink: '打开术语表',
@@ -92,7 +92,7 @@ const copy = locale === 'zh-CN'
       emptyTopic: '暂无文章',
       articleCount: (count: number) => `${count} 篇`,
       step: '第 {n} 步',
-      previewNote: '当前为预览构建，文章仍处于编辑审阅阶段。',
+      previewNote: '当前为预览构建，部分文章仍在核对。',
     }
   : {
       title: 'Running knowledge',
@@ -102,7 +102,7 @@ const copy = locale === 'zh-CN'
       topicsTitle: 'Nine topics',
       topicsHint: 'Topic tiles are reading entries, not difficulty levels.',
       pathsTitle: 'Learning paths',
-      pathsHint: 'Read reviewed articles in order; paths do not duplicate the text.',
+      pathsHint: 'Read checked articles in order; paths do not duplicate the text.',
       glossaryTitle: 'Glossary',
       glossaryHint: 'Shared definitions for pace, RPE, cadence, elevation gain and file formats.',
       glossaryLink: 'Open the glossary',
@@ -113,7 +113,7 @@ const copy = locale === 'zh-CN'
       emptyTopic: 'No articles yet',
       articleCount: (count: number) => `${count} article${count === 1 ? '' : 's'}`,
       step: 'Step {n}',
-      previewNote: 'This is a preview build; articles are still under editorial review.',
+      previewNote: 'This is a preview build; some articles are still being checked.',
     };
 const title = `${copy.title} · RunMap`;
 ---
