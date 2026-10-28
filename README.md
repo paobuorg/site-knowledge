@@ -9,7 +9,7 @@
 - 知识站已部署到 GitHub Pages，线上地址为 `https://learn.paobu.org/`；Pages 与 HTTPS 已启用。
 - 二十八个知识实体已于 2026-10-28 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md)。
 - 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已成功部署，`https://learn.paobu.org/` 已启用 HTTPS。当前 56 实体生产构建中，知识站有 86 个静态页面、发布清单 82 页、Pagefind 56 条记录、sitemap 82 个 URL；生产知识可见 28 个实体（27 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
-- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。K1 批次（节奏/间歇、负荷与过度训练、高温高湿、鞋科技）已进入本地构建；推送与 Pages 复核记录在 site-www 的发布证据中。
+- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。K1 批次（节奏/间歇、负荷与过度训练、高温高湿、鞋科技）已于 2026-10-28 推送并完成 Pages 复核，线上文章与本地构建的 56 条记录一致。
 
 ## 技术基线
 
@@ -80,7 +80,7 @@ node scripts/content-lock.mjs --verify # 校验内容树未变化
 
 - 站内链接使用真实静态路径，不依赖服务端 SSR、运行时秘密或自定义响应头。
 - 跨子域链接使用 `PUBLIC_ROUTES_ORIGIN`、`PUBLIC_KNOWLEDGE_ORIGIN` 与 `PUBLIC_TOOLS_ORIGIN`；生产默认值在核心中，本地 `.env` 指向三个本地端口。
-- GitHub 仓库、DNS 与 Pages 已配置：六个仓库位于 `paobuorg`，三站 Pages 已上线并启用 HTTPS。本仓库工作流使用 `PAOBU_CORE_ARTIFACT_URL`、`PAOBU_CORE_SHA256` 仓库变量；K1 批次推送后需重新核对线上文章，未复核前不把本地构建当作已上线证据。
+- GitHub 仓库、DNS 与 Pages 已配置：六个仓库位于 `paobuorg`，三站 Pages 已上线并启用 HTTPS。本仓库工作流使用 `PAOBU_CORE_ARTIFACT_URL`、`PAOBU_CORE_SHA256` 仓库变量；K1 批次线上文章已验证，证据见 site-www 的 [remote-status.json](../site-www/evidence/2026-10-28/release/remote-status.json)。
 
 ## 许可
 

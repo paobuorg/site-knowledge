@@ -9,7 +9,7 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 - The knowledge site is deployed on GitHub Pages at `https://learn.paobu.org/`; Pages and HTTPS are enabled.
 - All twenty-eight knowledge entities were **AI-assisted editorially reviewed** and published on 2026-10-28; each has bilingual `approve` records and matching contentDigests. The reviewer is explicitly labelled AI-assisted, not independent or professional medical/nutrition review; limitations are in [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md).
 - Local release preparation exists: production builds emit `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `release-manifest.json`, the PWA manifest, `sw.js` and an offline page. The Pages workflow has deployed successfully and `https://learn.paobu.org/` enforces HTTPS. In the current 56-entity production build the knowledge site has 86 static pages, 82 manifest pages, 56 Pagefind records and 82 sitemap URLs. Production knowledge shows 28 entities (27 articles plus a glossary), alongside five learning paths, and `pnpm check:production` passes.
-- This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site. The K1 batch (tempo/intervals, load and overtraining, heat and humidity, shoe technology) is in the local build; push and Pages verification are recorded in the site-www release evidence.
+- This site's index covers only knowledge articles in the current language. The aggregate three-site search lives on the main site. The K1 batch (tempo/intervals, load and overtraining, heat and humidity, shoe technology) was pushed and verified on Pages on 2026-10-28; the live articles match the local 56-record build.
 
 ## Technical baseline
 
@@ -80,7 +80,7 @@ The `sha256-tree-v1` lock covers `content/`, `data/` and `assets/` in all three 
 
 - Internal links use real static paths and depend on no server-side rendering, runtime secret or custom response header.
 - Cross-site links use `PUBLIC_ROUTES_ORIGIN`, `PUBLIC_KNOWLEDGE_ORIGIN` and `PUBLIC_TOOLS_ORIGIN`; production defaults live in the core and the local `.env` points to the three local ports.
-- GitHub repositories, DNS and Pages are configured: the six repositories live under `paobuorg`, and all three sites are live on custom domains with HTTPS. This workflow uses the `PAOBU_CORE_ARTIFACT_URL` and `PAOBU_CORE_SHA256` repository variables. The K1 push still needs live-article verification before the local build is described as deployed.
+- GitHub repositories, DNS and Pages are configured: the six repositories live under `paobuorg`, and all three sites are live on custom domains with HTTPS. This workflow uses the `PAOBU_CORE_ARTIFACT_URL` and `PAOBU_CORE_SHA256` repository variables. The K1 live articles are verified; evidence is in the site-www [remote-status.json](../site-www/evidence/2026-10-28/release/remote-status.json).
 
 ## Licence
 
