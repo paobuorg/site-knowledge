@@ -16,7 +16,7 @@
 - Node.js `>=22.23.4 <25`，pnpm 10.18.3，Astro 7.4.2，TypeScript 5.9.3。
 - `output: 'static'`、尾斜杠目录输出，规范域名为 `https://learn.paobu.org`。
 - Pagefind 1.5.2 在构建后生成本站索引。
-- `@paobu/core` 0.2.16，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录制品 SHA-256 `8b0e47ba5ba8c724a96697e5c8a9c527fce6faa9df1d11d5c1a5ec1504f680e2`。
+- `@paobu/core` 0.2.18，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录制品 SHA-256 `8aa7eed376c59ef91ffe5b2f8da4ed3cdeeee88c919db19e1954ebe2aa0f16f8`。
 
 ## 目录
 

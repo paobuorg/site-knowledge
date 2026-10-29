@@ -16,7 +16,7 @@ The site project for `learn.paobu.org`: nine fixed topics, article lists and det
 - Node.js `>=22.23.4 <25`, pnpm 10.18.3, Astro 7.4.2, TypeScript 5.9.3.
 - `output: 'static'` with directory-style trailing slashes; canonical origin `https://learn.paobu.org`.
 - Pagefind 1.5.2 builds the local index after the static build.
-- `@paobu/core` 0.2.16, installed from `vendor/paobu-core.tgz`; `core.lock.json` records artifact SHA-256 `8b0e47ba5ba8c724a96697e5c8a9c527fce6faa9df1d11d5c1a5ec1504f680e2`.
+- `@paobu/core` 0.2.18, installed from `vendor/paobu-core.tgz`; `core.lock.json` records artifact SHA-256 `8aa7eed376c59ef91ffe5b2f8da4ed3cdeeee88c919db19e1954ebe2aa0f16f8`.
 
 ## Layout
 
