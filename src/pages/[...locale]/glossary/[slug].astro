@@ -5,6 +5,7 @@ import LegalNotice from '@paobu/core/components/LegalNotice.astro';
 import { contributorName, otherLocale, type Locale, LOCALES, TOPIC_META } from '@paobu/core/lib/i18n';
 import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
 import { articleData, breadcrumbList } from '@paobu/core/lib/seo';
+import { describeSourceVerification } from '@paobu/core/content';
 import { siteContent } from '../../../lib/content';
 import {
   contentTypeLabel,
@@ -36,6 +37,7 @@ if (!entity) throw new Error(`Knowledge ${Astro.props.entityId} is not visible`)
 const translation = content.translation(entity, locale);
 const details = knowledgeDetails(entity);
 const sources = content.sourcesFor(entity);
+const sourceNotes = sources.map((source) => describeSourceVerification(source, locale));
 const related = content.related(entity, locale);
 const authors = [
   ...new Set(
@@ -204,10 +206,11 @@ const structuredData = [
         <section class="article-source-section" aria-labelledby="sources-heading">
           <h2 id="sources-heading">{copy.sourcesTitle}</h2>
           <div class="source-list">
-            {sources.map((source) => (
+            {sources.map((source, index) => (
               <div class="source-item">
                 <a href={source.url} rel="external noopener">{source.title} <Icon name="external" size={14} /></a>
                 <p>{source.claims.join(' ')}</p>
+                {sourceNotes[index] ? <p class="source-meta source-verification">{sourceNotes[index]}</p> : null}
                 <p class="source-meta">
                   {source.publisher}
                   {source.publishedAt ? ` · ${formatDate(source.publishedAt, locale)}` : ''}

@@ -8,6 +8,7 @@ loadLocalEnv();
 const { loadContent, defaultContentRoots, articleSection, enrichSearchContent, expandSearchAliases } =
   await import('@paobu/core/content');
 const { TOPIC_META } = await import('@paobu/core/lib/i18n');
+const { localePrefix } = await import('@paobu/core/lib/routing');
 const { writeHostingFiles, writeReleaseManifest } = await import('@paobu/core/lib/release');
 const { createIndex, close } = await import('pagefind');
 
@@ -44,7 +45,7 @@ for (const entity of content.visible('knowledge')) {
       `${translation.title}\n${translation.summary}\n\n${translation.plainText}\n\n${aliasText.join(' ')}`,
     );
     records.push({
-      url: `/${locale}/${section}/${entity.slug}/`,
+      url: `${localePrefix(locale)}/${section}/${entity.slug}/`,
       content: body,
       language: localeLanguage[locale],
       meta: {
