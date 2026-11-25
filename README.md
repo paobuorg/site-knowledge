@@ -10,15 +10,15 @@
 - 本站内容门禁通过：知识实体 **90**，来源 **959**（三站共用同一内容门禁口径），claim **5,389**，工具算例 **43**；知识实体全部为已审阅状态。
 - 本地生产构建：静态 HTML **211**，发布清单 **208** 页，Pagefind **180** 条，sitemap **208** 个 URL；`check:production` 通过（knowledge=90）。
 - 本地 QA 通过：360 页整站抓取、Chromium UI 矩阵、性能预算、故障、轨迹、跨站与 PWA 检查。
-- **线上 `https://learn.paobu.org/` 已发布 2026-11-25 新版**：由本仓 `main` 的 `76ad9b3` 构建并部署；中文与英文首页、文章页、搜索页和 208 个 sitemap URL 线上均返回 200。
-- 共享核心 `@paobu/core@0.3.0`，制品 SHA-256 `e30e89f289ca7c4fab2a0941d6967c081af54b63741559651c2cdf6ec4a0d16e`。
+- **线上 `https://learn.paobu.org/` 已发布 2026-11-25 新版**：由本仓 `main` 的 `a9ed1c7` 构建并部署；中文与英文首页、文章页、搜索页和 208 个 sitemap URL 线上均返回 200。
+- 共享核心 `@paobu/core@0.3.3`，制品 SHA-256 `8fdc28f59aab3bdabf908a4b83a405f2c39d7130df0afbc1eca5fd15e94968ae`。
 
 ## 技术基线
 
 - Node.js `>=22.23.4 <25`，pnpm 10.18.3，Astro 7.4.2，TypeScript 5.9.3。
 - `output: 'static'`、尾斜杠目录输出，规范域名 `https://learn.paobu.org`。
 - Pagefind 1.5.2 在构建后生成本站索引。
-- `@paobu/core` 0.3.0，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录同一 SHA-256。
+- `@paobu/core` 0.3.3，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录同一 SHA-256。
 - 本站只索引当前语言的文章；三站汇总搜索在主站提供。
 
 ## 目录
@@ -36,7 +36,7 @@ content.lock.json         两内容仓库的本地树摘要锁
 
 ## 本地运行
 
-六个工程位于同一父目录。先确保 `paobu-core` 已生成 `core-dist/paobu-core-0.3.0.tgz`：
+六个工程位于同一父目录。先确保 `paobu-core` 已生成 `core-dist/paobu-core-0.3.3.tgz`：
 
 ```bash
 cd paobu-core

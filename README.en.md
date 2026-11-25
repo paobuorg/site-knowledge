@@ -10,15 +10,15 @@ Website project for `learn.paobu.org`: nine fixed topics, article lists and deta
 - The content gate passes: **90 knowledge entities**, **959 sources** (shared three-site gate scope), **5,389 claims**, and **43 tool cases**; all knowledge entities are reviewed.
 - Local production build: **211** static HTML pages, **208** hosting pages, **180** Pagefind records, and **208** sitemap URLs. `check:production` passes (knowledge=90).
 - Local QA passes: 360-page crawl, Chromium UI matrix, performance budgets, fault, track, cross-site, and PWA checks.
-- **The live `https://learn.paobu.org/` now serves the 2026-11-25 build**: it was built and deployed from `main` at `76ad9b3`. The Chinese and English home pages, article pages, search page and all 208 sitemap URLs returned 200 in the live crawl.
-- Shared core `@paobu/core@0.3.0`, artifact SHA-256 `e30e89f289ca7c4fab2a0941d6967c081af54b63741559651c2cdf6ec4a0d16e`.
+- **The live `https://learn.paobu.org/` now serves the 2026-11-25 build**: it was built and deployed from `main` at `a9ed1c7`. The Chinese and English home pages, article pages, search page and all 208 sitemap URLs returned 200 in the live crawl.
+- Shared core `@paobu/core@0.3.3`, artifact SHA-256 `8fdc28f59aab3bdabf908a4b83a405f2c39d7130df0afbc1eca5fd15e94968ae`.
 
 ## Technical Baseline
 
 - Node.js `>=22.23.4 <25`, pnpm 10.18.3, Astro 7.4.2, TypeScript 5.9.3.
 - `output: 'static'`, trailing-slash directory output, canonical origin `https://learn.paobu.org`.
 - Pagefind 1.5.2 builds this site's index after the build.
-- `@paobu/core` 0.3.0 from `vendor/paobu-core.tgz`; `core.lock.json` records the same SHA-256.
+- `@paobu/core` 0.3.3 from `vendor/paobu-core.tgz`; `core.lock.json` records the same SHA-256.
 - This site indexes only articles in the current language; the three-site aggregate search lives on the main site.
 
 ## Layout
@@ -36,7 +36,7 @@ content.lock.json         Local tree lock for the two content repositories
 
 ## Local Run
 
-All six projects live under one parent directory. First ensure `paobu-core` has produced `core-dist/paobu-core-0.3.0.tgz`:
+All six projects live under one parent directory. First ensure `paobu-core` has produced `core-dist/paobu-core-0.3.3.tgz`:
 
 ```bash
 cd paobu-core
