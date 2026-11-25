@@ -2,21 +2,24 @@
 
 [English](README.en.md) · 中文
 
-`learn.paobu.org` 的网站工程：九个固定主题、文章列表与详情、主题聚合、本站搜索、语言入口与本地 404。正文、来源和审阅数据来自 `running-knowledge`；共享布局、主题、路由与内容校验来自 `@paobu/core` 的版本化制品。
+`learn.paobu.org` 的网站工程：九个固定主题、文章列表与详情、主题聚合、本站搜索、语言入口与本地 404。知识正文、来源和审阅数据来自 `running-handbook/knowledge/`；共享布局、主题、路由与内容校验来自 `@paobu/core` 的版本化制品。
 
 ## 当前状态
 
-- 知识站已部署到 GitHub Pages，线上地址为 `https://learn.paobu.org/`；Pages 与 HTTPS 已启用。
-- 五十一个知识实体已于 2026-10-28 完成 **AI 辅助编辑审阅**并发布；每个实体有双语 `approve` 记录和匹配 contentDigest。审阅身份明确标注为 AI 辅助，不是独立或专业医学/营养审阅；限制见 site-www 的 [ai-review-report.md](../site-www/evidence/2026-10-28/review/ai-review-report.md)。
-- 本地发布准备已建立：生产构建会生成 `CNAME`、`.nojekyll`、`robots.txt`、`sitemap.xml`、`release-manifest.json`、PWA manifest、`sw.js` 与离线页；`.github/workflows/pages.yml` 已成功部署，`https://learn.paobu.org/` 已启用 HTTPS。当前 79 实体生产构建中，知识站有 133 个静态页面、发布清单 130 页、Pagefind 102 条记录、sitemap 130 个 URL；生产知识可见 51 个实体（50 篇文章 + 术语表），另有 5 条学习路径，`pnpm check:production` 通过。
-- 本站索引只覆盖知识站当前语言的文章；三站汇总搜索在主站提供。K1–K4 批次与法律/文风更新已于 2026-10-28 完成；知识站新增中英文 `/legal/` 页面，文章页显示简短法律提示，正文已清理编辑台措辞与旧 `/zh-CN/` 链接。K2 新增步频、上下坡、路面、比赛补给、咖啡因、跑鞋合脚、山径导航和赛后恢复八篇。
+- **2026-11-25 本地结构调整完成**：内容源从旧 `running-knowledge` 改为 `running-handbook`，核心从 `site-www/packages/core` 改为独立 `paobu-core` 制品。
+- 本站内容门禁通过：知识实体 **90**，来源 **959**（三站共用同一内容门禁口径），claim **5,389**，工具算例 **43**；知识实体全部为已审阅状态。
+- 本地生产构建：静态 HTML **211**，发布清单 **208** 页，Pagefind **180** 条，sitemap **208** 个 URL；`check:production` 通过（knowledge=90）。
+- 本地 QA 通过：360 页整站抓取、Chromium UI 矩阵、性能预算、故障、轨迹、跨站与 PWA 检查。
+- **线上 `https://learn.paobu.org/` 仍是 2026-10-29 旧版**。本轮没有推送，Pages 与线上验收未完成。
+- 共享核心 `@paobu/core@0.3.0`，制品 SHA-256 `e30e89f289ca7c4fab2a0941d6967c081af54b63741559651c2cdf6ec4a0d16e`。
 
 ## 技术基线
 
 - Node.js `>=22.23.4 <25`，pnpm 10.18.3，Astro 7.4.2，TypeScript 5.9.3。
-- `output: 'static'`、尾斜杠目录输出，规范域名为 `https://learn.paobu.org`。
+- `output: 'static'`、尾斜杠目录输出，规范域名 `https://learn.paobu.org`。
 - Pagefind 1.5.2 在构建后生成本站索引。
-- `@paobu/core` 0.2.18，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录制品 SHA-256 `8aa7eed376c59ef91ffe5b2f8da4ed3cdeeee88c919db19e1954ebe2aa0f16f8`。
+- `@paobu/core` 0.3.0，来自 `vendor/paobu-core.tgz`；`core.lock.json` 记录同一 SHA-256。
+- 本站只索引当前语言的文章；三站汇总搜索在主站提供。
 
 ## 目录
 
@@ -24,21 +27,23 @@
 src/pages/                [...locale] 首页、文章列表/详情、主题聚合、搜索与 404
 src/lib/content.ts        本站内容加载（含预览开关）
 src/lib/view.ts           主题文案与知识详情格式
-scripts/sync-core.mjs     从 site-www/core-dist 校验并同步核心 tgz
+scripts/sync-core.mjs     从 ../paobu-core/core-dist 校验并同步核心 tgz
 scripts/postbuild.mjs     Pagefind 索引与静态输出检查
 vendor/paobu-core.tgz     锁定的核心制品（gitignore，安装前由 core:sync 重建）
-core.lock.json            制品版本与 SHA-256
-content.lock.json         三内容仓库的本地树摘要锁
+core.lock.json            核心制品版本与 SHA-256
+content.lock.json         两内容仓库的本地树摘要锁
 ```
 
 ## 本地运行
 
-六个工程应位于同一父目录。共享核心由 `site-www` 打包，子站只同步和安装制品：
+六个工程位于同一父目录。先确保 `paobu-core` 已生成 `core-dist/paobu-core-0.3.0.tgz`：
 
 ```bash
-# 先确保 site-www 已生成 core-dist/paobu-core-<version>.tgz
-cd site-knowledge
-pnpm core:sync
+cd paobu-core
+node scripts/pack-core.mjs
+
+cd ../site-knowledge
+node scripts/sync-core.mjs
 pnpm install
 pnpm test:content
 pnpm check
@@ -46,46 +51,39 @@ pnpm build
 pnpm dev
 ```
 
-- 开发：`http://localhost:4322`，语言入口 `/` 与 `/en/`。
-- 预览构建：`pnpm preview`，`http://localhost:4422`。构建时跨站链接按实际加载的 `.env` 生成（当前指向开发端口），验证跳转需同时运行对应站点；生产构建必须显式覆盖三个来源，否则 `.env` 的 localhost 会进入 HTML。
-- 构建：`pnpm build` 执行 Astro 静态构建和 Pagefind 后处理；内容校验失败会中止。
+- 开发：`http://localhost:4322`。
+- 预览构建：`pnpm preview`，`http://localhost:4422`。
 - 内容校验：`pnpm test:content`。
-- 类型与 Astro 检查：`pnpm check`。
-- 生产模式：`PREVIEW_UNREVIEWED=0 pnpm build` 生成发布文件；`pnpm check:production` 当前通过（51 个知识实体已发布）。
-- 注意：本仓库的 `pnpm test` 目前没有测试文件；不要把空测试套件当作验证证据。
+- 类型检查：`pnpm check`。
+- 单元测试：`pnpm test`。
 
-核心升级流程：在 `site-www` 运行 `pnpm core:pack`，在此运行 `pnpm core:sync && pnpm install --force`，确认 `core.lock.json` 与安装版本一致。不要改用 `workspace:*`，也不要复制 `packages/core` 源码。
-
-内容目录可用 `PAOBU_REPOS_DIR` 指向父目录，或用 `KNOWLEDGE_CONTENT_DIR` 覆盖。生产构建必须确保实际生效的环境文件中 `PREVIEW_UNREVIEWED=0` 或未设置；本地 `.env` 当前为 `1`，发布前应修改或移除。
-
-## 内容与主题
-
-- 九个主主题：训练方法、跑步技术、恢复与疲劳、营养与补给、装备选择、健康与伤病、安全与环境、习惯与心理、跑步文化。
-- 每篇文章只有一个主主题和若干辅助主题；主题聚合页只引用已发布正文，不复制内容。
-- 文章正文不执行脚本，不使用 MDX、内联 HTML 或动态 import。
-- 双语文章通过 `entityId` 配对；构建校验双语、来源、许可、审阅日期与内容摘要。格式化、翻译或重建不算复审。
-
-## 内容锁
-
-在交接包根目录运行：
+生产构建需显式设置三站来源与审阅开关：
 
 ```bash
-node scripts/content-lock.mjs          # 重新生成三个站点的 content.lock.json
-node scripts/content-lock.mjs --verify # 校验内容树未变化
+PUBLIC_ROUTES_ORIGIN=https://paobu.org \
+PUBLIC_KNOWLEDGE_ORIGIN=https://learn.paobu.org \
+PUBLIC_TOOLS_ORIGIN=https://tools.paobu.org \
+PREVIEW_UNREVIEWED=0 pnpm build
+pnpm check:production
 ```
 
-`sha256-tree-v1` 覆盖三个内容仓库的 `content/`、`data/` 和 `assets/`。锁中的 `commit` 已固定为完整 SHA：`running-routes` `0cd00cda…`、`running-knowledge` `a879da16…`、`running-tools` `4a8a3885…`。锁用于本地可复现构建，不代替 Git。
+## 共享核心与内容锁
 
-## 外部配置与发布边界
+核心源码只在 `paobu-core` 维护。修改后在该仓运行 `node scripts/pack-core.mjs`，再在本仓运行 `node scripts/sync-core.mjs && pnpm install`。三站必须使用同一版本与 SHA-256；旧 tgz 保留用于回滚。
 
-- 站内链接使用真实静态路径，不依赖服务端 SSR、运行时秘密或自定义响应头。
-- 跨子域链接使用 `PUBLIC_ROUTES_ORIGIN`、`PUBLIC_KNOWLEDGE_ORIGIN` 与 `PUBLIC_TOOLS_ORIGIN`；生产默认值在核心中，本地 `.env` 指向三个本地端口。
-- GitHub 仓库、DNS 与 Pages 已配置：六个仓库位于 `paobuorg`，三站 Pages 已上线并启用 HTTPS。本仓库工作流使用 `PAOBU_CORE_ARTIFACT_URL`、`PAOBU_CORE_SHA256` 仓库变量；品牌/豆客批次线上文章与首页已验证，证据见 site-www 的 [remote-status.json](../site-www/evidence/2026-10-28/release/remote-status.json)。
+内容锁由交接包根目录的 `node scripts/content-lock.mjs` 生成，覆盖 `marathon-trail-running-races` 的 `content/`、`data/`、`assets/` 与 `running-handbook` 的 `knowledge/{content,data,assets}`、`tools/{content,data,assets}`。当前锁到路线仓 `7cc63ab7…`、handbook `1e008e39…`。
+
+## 审阅与边界
+
+- 知识实体为 **AI 辅助编辑审阅**，不是独立或专业医学、营养、教练审阅；页面只显示中性的“跑起来编辑部 / RunUp Editorial”。
+- 健康类文章有就医边界、急症信号与不适用说明；不提供诊断或用药建议。
+- 预览构建可显示未审阅横幅；生产构建必须 `PREVIEW_UNREVIEWED=0`。
+- 线上仍是旧版；新仓名尚未在 `paobuorg` 创建，本机凭据没有 push 权限。不能把本地构建通过写成线上已发布。
 
 ## 许可
 
 - 网站代码：MIT。
-- 知识与正文：`running-knowledge` 仓库许可；新写正文为 CC BY 4.0。
-- 第三方来源、图片和引用片段保留各自权利。
+- 知识内容：`running-handbook` 仓库许可，新写正文为 CC BY 4.0。
+- 第三方依赖与字体保留各自许可。
 
-最后核对日期：2026-10-28。
+最后核对日期：2026-11-25。
