@@ -7,6 +7,7 @@ import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
 import { articleData, breadcrumbList } from '@paobu/core/lib/seo';
 import { describeSourceVerification } from '@paobu/core/content';
 import { siteContent } from '../../../lib/content';
+import { wrapContentTables } from '../../../lib/html';
 import { pathsForKnowledge } from '../../../lib/paths';
 import {
   contentTypeLabel,
@@ -205,7 +206,7 @@ const structuredData = [
           </ol>
         </details>
 
-        <div class="prose" set:html={translation.html} />
+        <div class="prose" set:html={wrapContentTables(translation.html)} />
 
         <section class="article-source-section" aria-labelledby="sources-heading">
           <h2 id="sources-heading">{copy.sourcesTitle}</h2>
@@ -445,5 +446,22 @@ const structuredData = [
     .article-header h1 {
       font-size: 2.1rem;
     }
+  }
+</style>
+
+<style is:global>
+  /* Long identifiers and formulas must wrap instead of widening the page. */
+  .prose code,
+  .prose pre,
+  .prose kbd {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .prose pre { white-space: pre-wrap; max-width: 100%; overflow-x: auto; }
+  .prose p, .prose li, .prose dd, .prose dt, .prose th, .prose td { overflow-wrap: anywhere; }
+  .prose .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 </style>
