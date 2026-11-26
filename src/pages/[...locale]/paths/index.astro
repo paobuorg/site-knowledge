@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Icon from '@paobu/core/components/Icon.astro';
+import { type Locale, LOCALES } from '@paobu/core/lib/i18n';
+import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
+import { siteContent } from '../../../lib/content';
+import { LEARNING_PATHS } from '../../../lib/paths';
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale: localeStaticParam(locale) }, props: { locale } }));
+}
+const locale = Astro.props.locale as Locale;
+const prefix = localePrefix(locale);
+const content = siteContent();
+const copy = locale === 'zh-CN'
+  ? { home: '首页', title: '学习路径', intro: '按顺序读，而不是按标签堆文章。每条路径给出一个可交付的结果和 6–8 个必读步骤；步骤里的正文仍由各自文章承担。', steps: '步', open: '打开路径', articles: '全部文章' }
+  : { home: 'Home', title: 'Learning paths', intro: 'Read in order, not as a tag pile. Each path states one outcome and six to eight required steps; the reading itself stays on the article pages.', steps: 'steps', open: 'Open path', articles: 'All articles' };
+---
+<BaseLayout locale={locale} title={`${copy.title} · RUNUP`} description={copy.intro} active="knowledge" preview={content.preview} footerAd>
+  <div class="page-shell">
+    <div class="breadcrumbs"><ol><li><a href={`${prefix}/`}>{copy.home}</a></li><li><a href={`${prefix}/articles/`}>{copy.articles}</a></li><li>{copy.title}</li></ol></div>
+    <div class="page-intro"><div><span class="pill lavender"><Icon name="spark" size={14} />{LEARNING_PATHS.length}</span><h1>{copy.title}</h1><p>{copy.intro}</p></div></div>
+    <div class="grid two">
+      {LEARNING_PATHS.map((path) => {
+        const text = path[locale === 'zh-CN' ? 'zh' : 'en'];
+        return (
+          <a class="card path-index-card" href={`${prefix}/paths/${path.slug}/`}>
+            <span class="pill"><Icon name={path.icon} size={14} />{path.steps.length} {copy.steps}</span>
+            <h2>{text.title}</h2>
+            <p>{text.summary}</p>
+            <span class="path-open">{copy.open} <Icon name="arrow-right" size={16} /></span>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>

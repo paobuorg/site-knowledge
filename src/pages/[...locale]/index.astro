@@ -6,6 +6,7 @@ import SearchField from '@paobu/core/components/SearchField.astro';
 import { t, TOPIC_IDS, TOPIC_META, type Locale, LOCALES } from '@paobu/core/lib/i18n';
 import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
 import { siteContent } from '../../lib/content';
+import { LEARNING_PATHS } from '../../lib/paths';
 import {
   TOPIC_COPY,
   contentTypeLabel,
@@ -35,44 +36,8 @@ const topicCounts = new Map(
   ]),
 );
 const latest = articles.slice(0, 4);
-const bySlug = (slug: string) => articles.find((entity) => entity.slug === slug);
-const paths = [
-  {
-    title: locale === 'zh-CN' ? '开始跑步' : 'Start running',
-    body: locale === 'zh-CN'
-      ? '先理解轻松强度，再安排可持续的一周，最后认识比赛距离。'
-      : 'Understand easy effort, build a repeatable week, then learn what race distance means.',
-    steps: ['easy-run', 'breathing-and-rhythm', 'running-habits', 'goal-setting-and-review', 'training-week', 'pre-and-post-run-fueling', 'training-log', 'running-across-life', 'pain-communication', 'shoe-fit-and-cushioning', 'running-apparel-and-chafing', 'marathon-distance'],
-  },
-  {
-    title: locale === 'zh-CN' ? '理解强度' : 'Understand intensity',
-    body: locale === 'zh-CN'
-      ? '用谈话测试、动作观察和训练结构，把快慢与恢复放在一起理解。'
-      : 'Connect talk-test effort, form observation and weekly structure instead of chasing one pace.',
-    steps: ['easy-run', 'running-form', 'breathing-and-rhythm', 'cadence-and-stride', 'uphill-and-downhill', 'tempo-and-intervals', 'training-week', 'long-run'],
-  },
-  {
-    title: locale === 'zh-CN' ? '首场半马/马拉松准备' : 'First half or marathon',
-    body: locale === 'zh-CN'
-      ? '从训练周、长距离和补给，到力量、减量、比赛距离、疼痛判断与恢复。'
-      : 'From weekly training and long runs to fuelling, strength, tapering, race distance, pain judgement and recovery.',
-    steps: ['training-week', 'long-run', 'long-run-fueling', 'pre-and-post-run-fueling', 'race-day-fueling', 'hydration', 'heat-and-humidity', 'strength-and-taper', 'daily-fueling', 'caffeine-and-running', 'supplements-and-evidence', 'weight-and-running', 'female-runners-and-red-s', 'goal-setting-and-review', 'wearables-and-recovery-data', 'training-log', 'load-and-overtraining', 'tempo-and-intervals', 'marathon-distance', 'pain-and-load', 'post-race-recovery', 'race-and-shared-path-etiquette'],
-  },
-  {
-    title: locale === 'zh-CN' ? '入门越野' : 'Start trail running',
-    body: locale === 'zh-CN'
-      ? '先读路线与天气，再准备鞋、照明、背包、补水和可撤退计划。'
-      : 'Read route and weather first, then prepare shoes, light, pack, fluids and an escape plan.',
-    steps: ['route-safety', 'night-running-and-traffic', 'running-shoes', 'running-apparel-and-chafing', 'running-surface', 'trail-gear', 'uphill-and-downhill', 'trail-navigation', 'race-and-shared-path-etiquette', 'cold-weather-running', 'heat-and-humidity', 'long-run-fueling', 'hydration', 'watch-gps'],
-  },
-  {
-    title: locale === 'zh-CN' ? '读懂经典赛道' : 'Read classic courses',
-    body: locale === 'zh-CN'
-      ? '从马拉松距离与跑步文化出发，再用固定版本、来源和地图锚点阅读经典赛道。'
-      : 'Start with marathon distance and running culture, then read classic courses through fixed versions, sources and map anchors.',
-    steps: ['marathon-distance', 'running-culture', 'classic-races-and-history', 'records-and-course-validity', 'reading-running-research', 'race-and-shared-path-etiquette', 'recovery-day', 'route-safety'],
-  },
-];
+const paths = LEARNING_PATHS;
+
 const copy = locale === 'zh-CN'
   ? {
       title: '跑步知识',
@@ -177,33 +142,22 @@ const title = `${copy.title} · RUNUP`;
           <h2 id="paths-heading">{copy.pathsTitle}</h2>
           <p class="section-hint">{copy.pathsHint}</p>
         </div>
+        <a class="text-link" href={`${prefix}/paths/`}>{copy.pathsTitle} <Icon name="arrow-right" size={15} /></a>
       </div>
       <div class="path-list">
-        {paths.map((path) => (
-          <article class="card path-card">
-            <div>
-              <span class="pill lavender"><Icon name="spark" size={13} />{copy.pathsTitle}</span>
-              <h3>{path.title}</h3>
-              <p>{path.body}</p>
-            </div>
-            <ol class="path-steps-list">
-              {path.steps.map((slug, index) => {
-                const entity = bySlug(slug);
-                if (!entity) return null;
-                const translation = content.translation(entity, locale);
-                return (
-                  <li>
-                    <a href={knowledgeHref(entity, locale)}>
-                      <span class="path-step-number" aria-hidden="true">{index + 1}</span>
-                      <span>{translation.title}</span>
-                      <Icon name="arrow-right" size={15} />
-                    </a>
-                  </li>
-                );
-              })}
-            </ol>
-          </article>
-        ))}
+        {paths.map((path) => {
+          const text = path[locale === 'zh-CN' ? 'zh' : 'en'];
+          return (
+            <a class="card path-card" href={`${prefix}/paths/${path.slug}/`}>
+              <div>
+                <span class="pill lavender"><Icon name={path.icon} size={13} />{path.steps.length} {locale === 'zh-CN' ? '步' : 'steps'}</span>
+                <h3>{text.title}</h3>
+                <p>{text.summary}</p>
+              </div>
+              <span class="path-open">{locale === 'zh-CN' ? '打开路径' : 'Open path'} <Icon name="arrow-right" size={16} /></span>
+            </a>
+          );
+        })}
       </div>
     </section>
 

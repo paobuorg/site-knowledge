@@ -64,3 +64,12 @@ export function formatDate(value: string | null, locale: Locale): string {
     timeZone: 'UTC',
   }).format(new Date(`${value}T00:00:00Z`));
 }
+
+export type KnowledgeSection = 'articles' | 'glossary' | 'paths';
+
+export function knowledgeSectionOf(entity: ContentEntity): KnowledgeSection {
+  const type = knowledgeDetails(entity).contentType;
+  if (type === 'glossary') return 'glossary';
+  if (type === 'learning-path') return 'paths';
+  return 'articles';
+}

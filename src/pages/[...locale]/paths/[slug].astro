@@ -1,0 +1,69 @@
+---
+import BaseLayout from '@paobu/core/layouts/BaseLayout.astro';
+import Icon from '@paobu/core/components/Icon.astro';
+import { type Locale, LOCALES } from '@paobu/core/lib/i18n';
+import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
+import { siteContent } from '../../../lib/content';
+import { entityHref } from '../../../lib/view';
+import { LEARNING_PATHS, learningPath } from '../../../lib/paths';
+
+export function getStaticPaths() {
+  return LOCALES.flatMap((locale) => LEARNING_PATHS.map((path) => ({
+    params: { locale: localeStaticParam(locale), slug: path.slug },
+    props: { locale, pathSlug: path.slug },
+  })));
+}
+const locale = Astro.props.locale as Locale;
+const prefix = localePrefix(locale);
+const content = siteContent();
+const path = learningPath(Astro.props.pathSlug);
+if (!path) throw new Error(`Unknown learning path ${Astro.props.pathSlug}`);
+const text = path[locale === 'zh-CN' ? 'zh' : 'en'];
+const steps = path.steps.map((step) => {
+  const entity = content.byId(step.ref);
+  if (!entity) throw new Error(`Learning path ${path.slug} points at missing ${step.ref}`);
+  return { step, entity, translation: content.translation(entity, locale) };
+});
+const others = LEARNING_PATHS.filter((item) => item.slug !== path.slug).slice(0, 3);
+const copy = locale === 'zh-CN'
+  ? { home: '首页', articles: '全部文章', paths: '学习路径', outcome: '完成后你能做什么', steps: '按顺序读', routes: '赛道', tools: '工具', others: '换一条路径' }
+  : { home: 'Home', articles: 'All articles', paths: 'Learning paths', outcome: 'What you can do afterwards', steps: 'Read in order', routes: 'Route', tools: 'Tool', others: 'Try another path' };
+const typeLabel = (kind: string) => kind === 'route' ? copy.routes : kind === 'tool' ? copy.tools : (locale === 'zh-CN' ? '知识' : 'Knowledge');
+---
+<BaseLayout locale={locale} title={`${text.title} · RUNUP`} description={text.summary} active="knowledge" preview={content.preview} footerAd>
+  <div class="page-shell">
+    <div class="breadcrumbs"><ol><li><a href={`${prefix}/`}>{copy.home}</a></li><li><a href={`${prefix}/articles/`}>{copy.articles}</a></li><li><a href={`${prefix}/paths/`}>{copy.paths}</a></li><li>{text.title}</li></ol></div>
+    <div class="page-intro"><div><span class="pill lavender"><Icon name={path.icon} size={14} />{steps.length} {copy.steps}</span><h1>{text.title}</h1><p>{text.intro}</p></div></div>
+    <section class="path-outcome"><h2>{copy.outcome}</h2><p>{text.outcome}</p></section>
+    <section aria-labelledby="path-steps-heading">
+      <div class="section-heading"><h2 id="path-steps-heading">{copy.steps}</h2></div>
+      <ol class="path-timeline">
+        {steps.map(({ step, entity, translation }, index) => (
+          <li>
+            <span class="path-number" aria-hidden="true">{index + 1}</span>
+            <a class="card path-step-card" href={entityHref(entity, locale)} data-cross-site={entity.kind !== 'knowledge'}>
+              <span class="pill">{typeLabel(entity.kind)}</span>
+              <h3>{translation.title}</h3>
+              <p>{step[locale === 'zh-CN' ? 'zh' : 'en']}</p>
+              <span class="path-step-open">{locale === 'zh-CN' ? '阅读这一步' : 'Read this step'} <Icon name="arrow-right" size={15} /></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+    <section class="path-others"><h2>{copy.others}</h2><div class="related-row">{others.map((item) => <a class="related-link" href={`${prefix}/paths/${item.slug}/`}><span>{item[locale === 'zh-CN' ? 'zh' : 'en'].title}</span><Icon name="arrow-right" size={17} /></a>)}</div></section>
+  </div>
+</BaseLayout>
+<style>
+  .path-outcome { margin: 0 0 32px; padding: 22px 24px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface-2); }
+  .path-outcome h2 { margin: 0 0 8px; font-size: 1.05rem; }
+  .path-outcome p { margin: 0; color: var(--muted-strong); line-height: 1.75; }
+  .path-timeline { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+  .path-timeline li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 12px; align-items: start; }
+  .path-number { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--primary-soft); color: var(--text); font-weight: 800; }
+  .path-step-card { display: grid; gap: 5px; padding: 18px 20px; color: var(--text); text-decoration: none; }
+  .path-step-card h3 { margin: 6px 0 0; font-size: 1.02rem; }
+  .path-step-card p { margin: 0; color: var(--muted); line-height: 1.65; }
+  .path-step-open { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; color: var(--muted-strong); font-size: 0.8rem; font-weight: 700; }
+  .path-others { margin-top: 38px; }
+</style>

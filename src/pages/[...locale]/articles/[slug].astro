@@ -7,6 +7,7 @@ import { localePrefix, localeStaticParam } from '@paobu/core/lib/routing';
 import { articleData, breadcrumbList } from '@paobu/core/lib/seo';
 import { describeSourceVerification } from '@paobu/core/content';
 import { siteContent } from '../../../lib/content';
+import { pathsForKnowledge } from '../../../lib/paths';
 import {
   contentTypeLabel,
   entityHref,
@@ -39,6 +40,7 @@ const details = knowledgeDetails(entity);
 const sources = content.sourcesFor(entity);
 const sourceNotes = sources.map((source) => describeSourceVerification(source, locale));
 const related = content.related(entity, locale);
+const learningPaths = pathsForKnowledge(entity.slug);
 const authors = [
   ...new Set(
     entity.translations
@@ -68,6 +70,7 @@ const copy = locale === 'zh-CN'
       relatedKnowledge: '关联知识',
       relatedRoutes: '关联赛道',
       relatedTools: '关联工具',
+      learningPaths: '按学习路径读',
       methodTitle: '版本与核验',
       authors: '撰写',
       noReview: '尚无核验记录',
@@ -91,6 +94,7 @@ const copy = locale === 'zh-CN'
       relatedKnowledge: 'Related knowledge',
       relatedRoutes: 'Related routes',
       relatedTools: 'Related tools',
+      learningPaths: 'Read in a path',
       methodTitle: 'Version and checks',
       authors: 'Written by',
       noReview: 'No check record yet',
@@ -272,6 +276,20 @@ const structuredData = [
           )}
         </section>
 
+        {learningPaths.length > 0 && (
+          <section class="article-paths" aria-labelledby="article-paths-heading">
+            <h2 id="article-paths-heading">{copy.learningPaths}</h2>
+            <div class="related-row">
+              {learningPaths.map((path) => (
+                <a class="related-link" href={`${prefix}/paths/${path.slug}/`}>
+                  <span>{path[locale === 'zh-CN' ? 'zh' : 'en'].title}</span>
+                  <Icon name="arrow-right" size={17} />
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
         <LegalNotice locale={locale} context="article" />
 
         <p class="article-back"><a href={`${prefix}/articles/`}><Icon name="arrow-left" size={15} />{copy.back}</a></p>
@@ -378,6 +396,16 @@ const structuredData = [
 
   .article-related h2 {
     font-size: 1.3rem;
+  }
+
+  .article-paths {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+  }
+
+  .article-paths h2 {
+    font-size: 1.15rem;
   }
 
   .article-back {
